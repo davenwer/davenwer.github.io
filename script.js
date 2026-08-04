@@ -37,29 +37,81 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
-function saveToVault() {
+document.addEventListener("DOMContentLoaded", async () => {
+  await window.coreVault.initDB();
+  renderVaultUI();
+});
+
+async function unlockCoreVault() {
+  const pass = document.getElementById("vaultPassphrase").value.trim();
+  if (!pass) return alert("Please enter a passphrase.");
+
+  await window.coreVault.deriveVaultKey(pass);
+  
+  const badge = document.getElementById("vault-status-badge");
+  badge.textContent = "🔓 UNLOCKED";
+  badge.style.background = "rgba(46,160,79,0.15)";
+  badge.style.color = "#3fb950";
+  badge.style.borderColor = "rgba(63,185,80,0.3)";
+
+  renderVaultUI();
+}
+
+async function saveToCoreVault() {
   const input = document.getElementById("vaultInput");
-  if (!input) return;
   const text = input.value.trim();
   if (!text) return;
 
-  let entries = JSON.parse(localStorage.getItem("kreer_vault") || "[]");
-  entries.unshift({ id: Date.now(), text: text, timestamp: new Date().toLocaleString() });
-  
-  localStorage.setItem("kreer_vault", JSON.stringify(entries));
-  input.value = "";
-  loadVault();
+  try {
+    await window.coreVault.storeEncryptedRecord(text);
+    input.value = "";
+    renderVaultUI();
+  } catch (err) {
+    alert("Save Error: Ensure vault is unlocked first!");
+  }
 }
 
-function loadVault() {
+async function renderVaultUI() {
   const display = document.getElementById("vaultDisplay");
   if (!display) return;
-  let entries = JSON.parse(localStorage.getItem("kreer_vault") || "[]");
 
-  if (entries.length === 0) {
-    display.innerHTML = '<div style="color: #8b949e; font-size: 0.85rem; padding: 8px 0;">No local entries found.</div>';
+  const records = await window.coreVault.getAllRecords();
+
+  if (records.length === 0) {
+    display.innerHTML = '<div style="color: #8b949e; font-size: 0.85rem;">No encrypted records stored.</div>';
     return;
   }
+
+  let html = "";
+  for (const doc of records) {
+    let decryptedText = "🔒 [Encrypted Ciphertext Blob]";
+    
+    if (window.coreVault.vaultKey) {
+      try {
+        decryptedText = await window.coreVault.decryptRecord(doc);
+      } catch (err) {
+        decryptedText = "⚠️ [Decryption Failed - Invalid Key]";
+      }
+    }
+
+    html += `
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; padding: 10px; background: rgba(255,255,255,0.02); border: 1px solid #30363d; border-radius: 6px;">
+        <div style="flex: 1; padding-right: 8px;">
+          <div style="font-size: 0.85rem; color: #c9d1d9; word-break: break-all;">${decryptedText}</div>
+          <div style="color: #8b949e; font-size: 0.7rem; margin-top: 6px;">${doc.timestamp} | ID: ${doc.id}</div>
+        </div>
+        <button onclick="deleteVaultRecord('${doc.id}')" style="background: none; border: none; color: #f85149; font-size: 0.9rem; cursor: pointer;">🗑️</button>
+      </div>
+    `;
+  }
+
+  display.innerHTML = html;
+}
+
+async function deleteVaultRecord(id) {
+  await window.coreVault.deleteRecord(id);
+  renderVaultUI();
+}
 
   display.innerHTML = entries.map(e => `
     <div class="entry-item" style="display: flex; justify-content: space-between; align-items: flex-start; padding: 10px; background: rgba(255,255,255,0.02); border: 1px solid #30363d; border-radius: 6px;">
