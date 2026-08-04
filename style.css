@@ -198,4 +198,17 @@ footer {
   padding: 0.25rem 0.65rem;
   border-radius: 12px;
   border: 1px solid var(--border-color);
+   /* Active Nav Indicator */
+nav a.active {
+  color: var(--accent-color);
+  font-weight: 700;
+  border-bottom: 2px solid var(--accent-color);
+}
+
+.tag {
+  cursor: pointer;
+  user-select: none;
+  transition: var(--transition);
+}
+
 }
