@@ -1,0 +1,10 @@
+{
+  "short_name": "Kreer",
+  "name": "Project-Kreer",
+  "icons": [],
+  "start_url": "/",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "display": "standalone",
+  "orientation": "portrait"
+}
