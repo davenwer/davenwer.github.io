@@ -488,4 +488,150 @@ function initCommandTerminal() {
       if (cmd) processQuery(cmd);
     });
   });
+/* ==========================================================================
+   Project-Kreer: Core Data Vault Module (W3C EDV Compliant)
+   ========================================================================== */
+
+class CoreDataVault {
+  constructor() {
+    this.dbName = "kreer_core_vault_db";
+    this.storeName = "encrypted_records";
+    this.db = null;
+    this.vaultKey = null;
+  }
+
+  /**
+   * Initialize IndexedDB database
+   */
+  async initDB() {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open(this.dbName, 1);
+      request.onupgradeneeded = (e) => {
+        const db = e.target.result;
+        if (!db.objectStoreNames.contains(this.storeName)) {
+          db.createObjectStore(this.storeName, { keyPath: "id" });
+        }
+      };
+      request.onsuccess = (e) => {
+        this.db = e.target.result;
+        resolve(this.db);
+      };
+      request.onerror = (e) => reject("DB Initialization Error: " + e.target.error);
+    });
+  }
+
+  /**
+   * Derive an AES-GCM 256-bit encryption key using PBKDF2
+   */
+  async deriveVaultKey(secretPassphrase, saltString = "kreer_vault_salt") {
+    const enc = new TextEncoder();
+    const keyMaterial = await crypto.subtle.importKey(
+      "raw",
+      enc.encode(secretPassphrase),
+      "PBKDF2",
+      false,
+      ["deriveKey"]
+    );
+
+    this.vaultKey = await crypto.subtle.deriveKey(
+      {
+        name: "PBKDF2",
+        salt: enc.encode(saltString),
+        iterations: 100000,
+        hash: "SHA-256"
+      },
+      keyMaterial,
+      { name: "AES-GCM", length: 256 },
+      false,
+      ["encrypt", "decrypt"]
+    );
+
+    return this.vaultKey;
+  }
+
+  /**
+   * Encrypt raw payload into W3C EDV Document structure
+   */
+  async storeEncryptedRecord(payloadText) {
+    if (!this.vaultKey) throw new Error("Vault unlocked key missing!");
+
+    const enc = new TextEncoder();
+    const iv = crypto.getRandomValues(new Uint8Array(12)); // 96-bit AES-GCM IV
+
+    const ciphertextBuffer = await crypto.subtle.encrypt(
+      { name: "AES-GCM", iv: iv },
+      this.vaultKey,
+      enc.encode(payloadText)
+    );
+
+    // Formulate W3C EDV Document Envelope
+    const edvDocument = {
+      id: "edv_" + Date.now() + "_" + Math.random().toString(36).substr(2, 5),
+      timestamp: new Date().toISOString(),
+      iv: Array.from(iv),
+      ciphertext: Array.from(new Uint8Array(ciphertextBuffer))
+    };
+
+    // Store in IndexedDB
+    return new Promise((resolve, reject) => {
+      const transaction = this.db.transaction([this.storeName], "readwrite");
+      const store = transaction.objectStore(this.storeName);
+      const request = store.add(edvDocument);
+
+      request.onsuccess = () => resolve(edvDocument);
+      request.onerror = (e) => reject("Failed to save encrypted record: " + e.target.error);
+    });
+  }
+
+  /**
+   * Decrypt record back to plain text
+   */
+  async decryptRecord(edvDocument) {
+    if (!this.vaultKey) throw new Error("Vault unlocked key missing!");
+
+    const iv = new Uint8Array(edvDocument.iv);
+    const ciphertext = new Uint8Array(edvDocument.ciphertext);
+
+    const decryptedBuffer = await crypto.subtle.decrypt(
+      { name: "AES-GCM", iv: iv },
+      this.vaultKey,
+      ciphertext
+    );
+
+    return new TextDecoder().decode(decryptedBuffer);
+  }
+
+  /**
+   * Retrieve all raw encrypted EDV documents
+   */
+  async getAllRecords() {
+    return new Promise((resolve, reject) => {
+      const transaction = this.db.transaction([this.storeName], "readonly");
+      const store = transaction.objectStore(this.storeName);
+      const request = store.getAll();
+
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = (e) => reject("Failed to fetch records: " + e.target.error);
+    });
+  }
+
+  /**
+   * Delete an encrypted record by ID
+   */
+  async deleteRecord(id) {
+    return new Promise((resolve, reject) => {
+      const transaction = this.db.transaction([this.storeName], "readwrite");
+      const store = transaction.objectStore(this.storeName);
+      const request = store.delete(id);
+
+      request.onsuccess = () => resolve(true);
+      request.onerror = (e) => reject("Delete operation failed: " + e.target.error);
+    });
+  }
 }
+
+// Global Core Vault Singleton Instance
+window.coreVault = new CoreDataVault();
+
+}
+
