@@ -135,16 +135,21 @@ function initProjectModals() {
   const modal = document.getElementById("project-modal");
   const modalBody = document.getElementById("modal-body");
   const closeBtn = document.getElementById("modal-close-btn");
-  const projectCards = document.querySelectorAll(".project-card");
+  const projectCards = document.querySelectorAll(".project-card, #projects .card");
 
   if (!modal || !modalBody || !closeBtn) return;
 
   projectCards.forEach((card) => {
     card.addEventListener("click", () => {
-      const title = card.querySelector("h3")?.textContent.trim();
-      const details = projectDetails[title];
-
-      if (!details) return;
+      const title = card.querySelector("h3")?.textContent.trim() || "Project Details";
+      const details = projectDetails[title] || {
+        architecture: "Modular architecture built with responsive HTML5, custom CSS properties, and client-side JavaScript execution.",
+        features: [
+          "Deployed automatically via GitHub Actions CI/CD pipeline",
+          "Mobile-first responsive design system",
+          "Interactive DOM state management"
+        ]
+      };
 
       modalBody.innerHTML = `
         <h3>${title}</h3>
@@ -157,7 +162,7 @@ function initProjectModals() {
       `;
 
       modal.classList.add("active");
-      document.body.style.overflow = "hidden"; // Prevent background scroll
+      document.body.style.overflow = "hidden";
     });
   });
 
