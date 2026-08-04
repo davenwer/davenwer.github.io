@@ -2,7 +2,7 @@
    Project-Kreer Master Script Engine (Smart Intent Engine v2.2 - Mobile & Voice Enabled)
    ========================================================================== */
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   initLiveClock();
   initTagFilter();
   initScrollSpy();
@@ -10,6 +10,31 @@ document.addEventListener("DOMContentLoaded", () => {
   initGitHubTelemetry();
   initCommandTerminal();
   loadVault();
+  // Initialize IndexedDB EDV Vault
+  if (window.coreVault) {
+    await window.coreVault.initDB();
+    renderVaultUI();
+  }
+
+  // CLI Drawer Logic
+  const cliTrigger = document.getElementById("cli-trigger");
+  const cliDrawer = document.getElementById("cli-drawer");
+  const cliClose = document.getElementById("cli-close");
+
+  if (cliTrigger && cliDrawer) {
+    cliTrigger.addEventListener("click", (e) => {
+      e.preventDefault();
+      const isHidden = cliDrawer.getAttribute("aria-hidden") === "true";
+      cliDrawer.setAttribute("aria-hidden", isHidden ? "false" : "true");
+    });
+  }
+
+  if (cliClose && cliDrawer) {
+    cliClose.addEventListener("click", (e) => {
+      e.preventDefault();
+      cliDrawer.setAttribute("aria-hidden", "true");
+    });
+  }
 });
 
 function saveToVault() {
