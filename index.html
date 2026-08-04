@@ -415,7 +415,29 @@
   <!-- Scripts -->
   <script src="script.js" defer></script>
   <script>
-    document.addEventListener("DOMContentLoaded", loadVault);
+    document.addEventListener("DOMContentLoaded", () => {
+      loadVault();
+
+      // Reliable Drawer Toggle Fix
+      const cliTrigger = document.getElementById("cli-trigger");
+      const cliDrawer = document.getElementById("cli-drawer");
+      const cliClose = document.getElementById("cli-close");
+
+      if (cliTrigger && cliDrawer) {
+        cliTrigger.addEventListener("click", (e) => {
+          e.preventDefault();
+          const isHidden = cliDrawer.getAttribute("aria-hidden") === "true";
+          cliDrawer.setAttribute("aria-hidden", isHidden ? "false" : "true");
+        });
+      }
+
+      if (cliClose && cliDrawer) {
+        cliClose.addEventListener("click", (e) => {
+          e.preventDefault();
+          cliDrawer.setAttribute("aria-hidden", "true");
+        });
+      }
+    });
 
     function saveToVault() {
       const input = document.getElementById("vaultInput");
@@ -447,21 +469,8 @@
         </div>
       `).join('');
     }
-
-    // CLI Drawer Toggle Support
-    const cliTrigger = document.getElementById("cli-trigger");
-    const cliDrawer = document.getElementById("cli-drawer");
-    const cliClose = document.getElementById("cli-close");
-
-    if (cliTrigger && cliDrawer && cliClose) {
-      cliTrigger.addEventListener("click", () => {
-        cliDrawer.setAttribute("aria-hidden", "false");
-      });
-      cliClose.addEventListener("click", () => {
-        cliDrawer.setAttribute("aria-hidden", "true");
-      });
-    }
   </script>
+
 
   <!-- Project Detail Modal Container -->
   <div id="project-modal" class="modal-overlay" aria-hidden="true">
