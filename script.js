@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Project-Kreer Master Script Engine (With Smart Chatbot Intent Matcher)
+   Project-Kreer Master Script Engine (Smart Intent Engine v2.1)
    ========================================================================== */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -251,16 +251,15 @@ function initCommandTerminal() {
   triggerBtn.addEventListener("click", openDrawer);
   closeBtn.addEventListener("click", closeDrawer);
 
-  // Expanded Intent Matcher Engine
   const getBotResponse = (query) => {
     const q = query.toLowerCase();
 
-    // 1. System CLI Commands
+    // System Commands
     if (q === "help") {
-      return "System Commands: <strong>status</strong>, <strong>theme</strong>, <strong>goto [section]</strong>, <strong>clear</strong>. Or ask about my <strong>skills</strong>, <strong>web apps</strong>, <strong>marketing</strong>, or <strong>projects</strong>!";
+      return "Commands: <strong>status</strong>, <strong>theme</strong>, <strong>goto [section]</strong>, <strong>clear</strong>. Or ask about my <strong>skills</strong>, <strong>code</strong>, <strong>marketing</strong>, or <strong>projects</strong>!";
     }
     if (q === "status") {
-      return "SYSTEM STATUS: All services operational | PWA: Enabled | Telemetry: Live via GitHub API";
+      return "SYSTEM STATUS: All systems operational | Telemetry: Live via GitHub API";
     }
     if (q === "theme") {
       document.body.classList.toggle("green-theme");
@@ -281,37 +280,37 @@ function initCommandTerminal() {
       return null;
     }
 
-    // 2. Web / Native App / Development Capability Queries
-    if (q.includes("app") || q.includes("native") || q.includes("web") || q.includes("build") || q.includes("create") || q.includes("develop")) {
-      return "Yes! I architect modern web applications, progressive web apps (PWAs), automated CI/CD deployment pipelines, and responsive mobile-first platforms using JavaScript, Python, and cloud infrastructure.";
+    // Coding & App Development
+    if (q.includes("code") || q.includes("program") || q.includes("app") || q.includes("build") || q.includes("develop") || q.includes("create")) {
+      return "Yes! I write modern code for web applications, automated CI/CD deployment pipelines, and responsive platforms using JavaScript, Python, and robust system architectures.";
     }
 
-    // 3. Background & Bio Queries
+    // Background & Identity
     if (q.includes("who") || q.includes("about") || q.includes("old") || q.includes("age") || q.includes("okennachukwu") || q.includes("intro")) {
-      return "I'm Okennachukwu—a technology specialist with expertise across web architecture, systems engineering, data accuracy testing, and performance growth analytics.";
+      return "I'm Okennachukwu—a technology specialist focused on scalable web architecture, systems engineering, data testing, and performance growth analytics.";
     }
 
-    // 4. Marketing & E-Commerce Work
+    // Marketing & E-Commerce
     if (q.includes("olist") || q.includes("marketing") || q.includes("e-commerce") || q.includes("ecommerce") || q.includes("amazon") || q.includes("yahands")) {
-      return "E-Commerce & Marketing background:<br>• <strong>Marketing Team Lead @ Olist</strong> (2019–2021): Directed growth strategy, analytics, and business systems testing.<br>• <strong>Yahands Infrastructure</strong>: Amazon Seller Central integrations, catalog automation, and brand web development.";
+      return "E-Commerce & Marketing background:<br>• <strong>Marketing Team Lead @ Olist</strong> (2019–2021): Directed growth strategy, analytics, and business systems testing.<br>• <strong>Yahands Infrastructure</strong>: Amazon Seller Central integrations, automated product listings, and web systems.";
     }
 
-    // 5. Tech Stack & Skills
+    // Tech Stack & Skills
     if (q.includes("skill") || q.includes("stack") || q.includes("python") || q.includes("js") || q.includes("javascript")) {
-      return "Core Stack:<br>• <strong>Frontend/PWA</strong>: HTML5, CSS3, ES6+ JavaScript<br>• <strong>Automation/Backend</strong>: Python, GitHub Actions CI/CD<br>• <strong>AI/ML Integration</strong>: DeepSeek Models, Alpaca API, Multi-Agent Workflows<br>• <strong>Operations</strong>: Systems Testing & Data Accuracy Verification";
+      return "Core Stack:<br>• <strong>Languages & Web</strong>: JavaScript (ES6+), Python, HTML5, CSS3<br>• <strong>AI & Automation</strong>: DeepSeek Models, Alpaca API, Multi-Agent Workflows<br>• <strong>Operations</strong>: Systems Testing & Data Accuracy Verification";
     }
 
-    // 6. AI & Trading Projects
+    // Projects & AI
     if (q.includes("project") || q.includes("agent") || q.includes("trading") || q.includes("ai") || q.includes("deepseek")) {
-      return "Key Technical Projects:<br>1. <strong>Algorithmic Trading Agent</strong> (DeepSeek + Alpaca REST/WebSocket API)<br>2. <strong>Multi-Agent Workflow Engine</strong><br>3. <strong>Yahands Storefront & Web Systems</strong><br>Tap any project card on the page to view detailed system specs!";
+      return "Key Technical Projects:<br>1. <strong>Algorithmic Trading Agent</strong> (DeepSeek + Alpaca REST/WebSocket API)<br>2. <strong>Multi-Agent Workflow Engine</strong><br>3. <strong>Yahands E-Commerce & Web Infrastructure</strong><br>Tap any project card on the page to view detailed system specs!";
     }
 
-    // 7. Contact / Reach Out
+    // Contact
     if (q.includes("contact") || q.includes("email") || q.includes("hire") || q.includes("reach") || q.includes("message")) {
-      return "You can message me directly using the <strong>Direct Message</strong> button in the Signal & Contact section, or visit my GitHub profile!";
+      return "You can connect directly using the <strong>Direct Message</strong> button in the Signal & Contact section, or via GitHub!";
     }
 
-    return `I'm programmed to assist with inquiries about my <strong>web app development</strong>, <strong>AI projects</strong>, <strong>marketing experience at Olist</strong>, or <strong>skills</strong>. Type <strong>help</strong> for system commands!`;
+    return `I'm programmed to assist with inquiries about my <strong>coding experience</strong>, <strong>AI projects</strong>, <strong>marketing leadership at Olist</strong>, or <strong>skills</strong>. Type <strong>help</strong> for system commands!`;
   };
 
   const processQuery = (userQuery) => {
