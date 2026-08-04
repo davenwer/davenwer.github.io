@@ -319,8 +319,9 @@ main {
 .modal-body ul li {
   margin-bottom: 0.4rem;
 }
+
 /* ==========================================================================
-   Contact Section & Interactive Buttons
+   Contact Buttons & Link Overrides
    ========================================================================== */
 
 .contact-actions {
@@ -330,7 +331,9 @@ main {
   margin-top: 1.5rem;
 }
 
-.btn {
+.btn, 
+a.btn, 
+a.btn:visited {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -338,14 +341,15 @@ main {
   border-radius: var(--radius);
   font-weight: 600;
   font-size: 0.95rem;
-  text-decoration: none;
+  text-decoration: none !important;
   transition: var(--transition);
   cursor: pointer;
 }
 
-.btn-primary {
-  background-color: var(--accent-color);
-  color: var(--bg-primary);
+.btn-primary, 
+a.btn-primary {
+  background-color: var(--accent-color) !important;
+  color: var(--bg-primary) !important;
   border: 1px solid var(--accent-color);
 }
 
@@ -354,15 +358,16 @@ main {
   transform: translateY(-2px);
 }
 
-.btn-secondary {
-  background-color: var(--bg-surface);
-  color: var(--text-main);
+.btn-secondary, 
+a.btn-secondary {
+  background-color: var(--bg-surface) !important;
+  color: var(--text-main) !important;
   border: 1px solid var(--border-color);
 }
 
 .btn-secondary:hover {
   border-color: var(--accent-color);
-  color: var(--accent-color);
+  color: var(--accent-color) !important;
   transform: translateY(-2px);
 }
 
@@ -371,6 +376,8 @@ main {
     width: 100%; /* Full width touch targets on mobile */
   }
 }
+
+
 /* ==========================================================================
    System Telemetry & Live GitHub Feed
    ========================================================================== */
