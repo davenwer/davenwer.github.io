@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initScrollSpy();
   initProjectModals();
   initGitHubTelemetry();
+  initCommandTerminal();
 });
 
 /* 1. Live System Clock */
@@ -224,4 +225,100 @@ async function initGitHubTelemetry() {
       </article>
     `;
   }
+/* 6. Hybrid AI Chatbot & Command Terminal Handler */
+function initCommandTerminal() {
+  const triggerBtn = document.getElementById("cli-trigger");
+  const drawer = document.getElementById("cli-drawer");
+  const closeBtn = document.getElementById("cli-close");
+  const form = document.getElementById("cli-form");
+  const input = document.getElementById("cli-input");
+  const output = document.getElementById("cli-output");
+  const pills = document.querySelectorAll(".cli-pill");
+
+  if (!triggerBtn || !drawer || !closeBtn || !form || !input || !output) return;
+
+  triggerBtn.addEventListener("click", () => drawer.classList.add("active"));
+  closeBtn.addEventListener("click", () => drawer.classList.remove("active"));
+
+  const getBotResponse = (query) => {
+    const q = query.toLowerCase();
+
+    if (q === "help") {
+      return "Commands: <strong>status</strong>, <strong>theme</strong>, <strong>goto [section]</strong>, <strong>clear</strong>. Or ask about <strong>skills</strong>, <strong>experience</strong>, or <strong>projects</strong>!";
+    }
+    if (q === "status") {
+      return "SYSTEM STATUS: All services operational | Live GitHub Telemetry: Active | Build: GitHub Actions CI/CD";
+    }
+    if (q === "theme") {
+      document.body.classList.toggle("green-theme");
+      return "🎨 Interface theme toggled successfully!";
+    }
+    if (q.startsWith("goto ")) {
+      const target = q.replace("goto ", "").trim();
+      const targetEl = document.getElementById(target);
+      if (targetEl) {
+        targetEl.scrollIntoView({ behavior: "smooth" });
+        drawer.classList.remove("active");
+        return `Navigated to #${target}`;
+      }
+      return `Section #${target} not found. Try: about, experience, projects, telemetry, contact`;
+    }
+    if (q === "clear") {
+      output.innerHTML = "";
+      return null;
+    }
+
+    if (q.includes("who") || q.includes("about") || q.includes("intro")) {
+      return "I'm Okennachukwu—a specialist in scalable systems engineering, performance marketing analytics, data workflows, and modern web solutions.";
+    }
+    if (q.includes("skill") || q.includes("stack") || q.includes("tech")) {
+      return "Core Stack: JavaScript (ES6+), Python, GitHub Actions CI/CD, Data Analytics, Systems Testing, E-Commerce Infrastructure, and Multi-Agent AI workflows.";
+    }
+    if (q.includes("experience") || q.includes("work") || q.includes("olist")) {
+      return "Experience highlights:<br>• <strong>E-Commerce Operations &amp; Strategy</strong> (2021–Present): Storefront architecture, listing automation, catalog management.<br>• <strong>Marketing &amp; Systems Lead @ Olist</strong> (2019–2021): Led growth initiatives, data accuracy workflows, and system testing.";
+    }
+    if (q.includes("project") || q.includes("agent") || q.includes("trading") || q.includes("yahands")) {
+      return "Key Projects:<br>1. <strong>Algorithmic Trading Agent</strong> (DeepSeek + Alpaca API)<br>2. <strong>Multi-Agent Workflow Engine</strong><br>3. <strong>Yahands E-Commerce &amp; Web Infrastructure</strong><br>Tap any card in the Projects section for technical architecture deep-dives!";
+    }
+    if (q.includes("contact") || q.includes("email") || q.includes("reach") || q.includes("hire")) {
+      return "You can connect directly via the <strong>Signal &amp; Contact</strong> section or email via the direct message button at the bottom of the page!";
+    }
+
+    return `I'm not sure about "${query}" yet. Try asking about <strong>skills</strong>, <strong>experience</strong>, <strong>projects</strong>, or type <strong>help</strong> for system commands!`;
+  };
+
+  const processQuery = (userQuery) => {
+    const userLine = document.createElement("p");
+    userLine.className = "user-msg";
+    userLine.textContent = `> ${userQuery}`;
+    output.appendChild(userLine);
+
+    const responseText = getBotResponse(userQuery);
+
+    if (responseText !== null) {
+      const botLine = document.createElement("p");
+      botLine.className = "bot-msg";
+      botLine.innerHTML = responseText;
+      output.appendChild(botLine);
+    }
+
+    output.scrollTop = output.scrollHeight;
+  };
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    if (input.value.trim()) {
+      processQuery(input.value.trim());
+      input.value = "";
+    }
+  });
+
+  pills.forEach((pill) => {
+    pill.addEventListener("click", () => {
+      const cmd = pill.getAttribute("data-cmd");
+      if (cmd) processQuery(cmd);
+    });
+  });
+}
+   
 }
