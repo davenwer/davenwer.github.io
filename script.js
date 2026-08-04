@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Project-Kreer: Master Mobile Engine
+   Project-Kreer Master Script Engine
    ========================================================================== */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -169,7 +169,6 @@ async function initGitHubTelemetry() {
   const username = "davenwer";
   const apiEndpoint = `https://api.github.com/users/${username}/repos?sort=updated&per_page=4`;
 
-  // Timeout guard (3 seconds) to force fallback if network stalls
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 3000);
 
@@ -225,6 +224,8 @@ async function initGitHubTelemetry() {
       </article>
     `;
   }
+}
+
 /* 6. Hybrid AI Chatbot & Command Terminal Handler */
 function initCommandTerminal() {
   const triggerBtn = document.getElementById("cli-trigger");
@@ -237,8 +238,19 @@ function initCommandTerminal() {
 
   if (!triggerBtn || !drawer || !closeBtn || !form || !input || !output) return;
 
-  triggerBtn.addEventListener("click", () => drawer.classList.add("active"));
-  closeBtn.addEventListener("click", () => drawer.classList.remove("active"));
+  // Touch and Click Event Handlers for Mobile Safari
+  const openDrawer = (e) => {
+    if (e) e.preventDefault();
+    drawer.classList.add("active");
+  };
+
+  const closeDrawer = (e) => {
+    if (e) e.preventDefault();
+    drawer.classList.remove("active");
+  };
+
+  triggerBtn.addEventListener("click", openDrawer);
+  closeBtn.addEventListener("click", closeDrawer);
 
   const getBotResponse = (query) => {
     const q = query.toLowerCase();
@@ -319,6 +331,4 @@ function initCommandTerminal() {
       if (cmd) processQuery(cmd);
     });
   });
-}
-   
 }
