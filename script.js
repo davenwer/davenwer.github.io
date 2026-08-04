@@ -1,24 +1,23 @@
 /* ==========================================================================
-   Project-Kreer: Interactive Engine
+   Project-Kreer: Master Mobile Engine
    ========================================================================== */
 
 document.addEventListener("DOMContentLoaded", () => {
   initLiveClock();
   initTagFilter();
   initScrollSpy();
+  initProjectModals();
+  initGitHubTelemetry();
 });
 
-/**
- * 1. Live System UTC Clock
- * Updates every second for a real-time system monitoring aesthetic.
- */
+/* 1. Live System Clock */
 function initLiveClock() {
   const clockElement = document.getElementById("live-clock");
   if (!clockElement) return;
 
   function updateTime() {
     const now = new Date();
-    const utcTime = now.toUTCString().split(" ")[4]; // Gets HH:MM:SS
+    const utcTime = now.toUTCString().split(" ")[4];
     clockElement.textContent = `SYSTEM ONLINE | ${utcTime} UTC`;
   }
 
@@ -26,10 +25,7 @@ function initLiveClock() {
   setInterval(updateTime, 1000);
 }
 
-/**
- * 2. Interactive Tag Filtering
- * Click any tech tag to filter cards. Click again to reset.
- */
+/* 2. Interactive Tag Filtering */
 function initTagFilter() {
   const tags = document.querySelectorAll(".tag");
   const cards = document.querySelectorAll(".card");
@@ -38,15 +34,8 @@ function initTagFilter() {
   tags.forEach((tag) => {
     tag.addEventListener("click", () => {
       const selectedText = tag.textContent.trim().toLowerCase();
+      activeTag = activeTag === selectedText ? null : selectedText;
 
-      // Toggle active tag state
-      if (activeTag === selectedText) {
-        activeTag = null; // Reset filter
-      } else {
-        activeTag = selectedText;
-      }
-
-      // Filter visible cards
       cards.forEach((card) => {
         const cardTags = Array.from(card.querySelectorAll(".tag")).map((t) =>
           t.textContent.trim().toLowerCase()
@@ -61,7 +50,6 @@ function initTagFilter() {
         }
       });
 
-      // Style active tag
       tags.forEach((t) => {
         if (activeTag && t.textContent.trim().toLowerCase() === activeTag) {
           t.style.backgroundColor = "var(--accent-color)";
@@ -75,17 +63,13 @@ function initTagFilter() {
   });
 }
 
-/**
- * 3. ScrollSpy Navigation
- * Highlights navigation items as you scroll past sections.
- */
+/* 3. ScrollSpy Navigation */
 function initScrollSpy() {
   const sections = document.querySelectorAll("section");
   const navLinks = document.querySelectorAll("nav a");
 
   window.addEventListener("scroll", () => {
     let currentSection = "";
-
     sections.forEach((section) => {
       const sectionTop = section.offsetTop - 100;
       if (window.scrollY >= sectionTop) {
@@ -100,10 +84,9 @@ function initScrollSpy() {
       }
     });
   });
+}
 
-   /**
- * 4. Interactive Project Detail Modals
- */
+/* 4. Interactive Project Modals */
 const projectDetails = {
   "Algorithmic Trading Agent": {
     architecture: "Event-driven architecture connecting local DeepSeek reasoning engine to Alpaca REST/WebSocket endpoints.",
@@ -177,13 +160,7 @@ function initProjectModals() {
   });
 }
 
-// Call inside DOMContentLoaded
-document.addEventListener("DOMContentLoaded", () => {
-  initProjectModals();
-});
-/**
- * 5. Live GitHub Telemetry Fetcher
- */
+/* 5. Live GitHub Telemetry Fetcher */
 async function initGitHubTelemetry() {
   const container = document.getElementById("telemetry-feed");
   if (!container) return;
@@ -191,18 +168,23 @@ async function initGitHubTelemetry() {
   const username = "davenwer";
   const apiEndpoint = `https://api.github.com/users/${username}/repos?sort=updated&per_page=4`;
 
+  // Timeout guard (3 seconds) to force fallback if network stalls
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 3000);
+
   try {
-    const response = await fetch(apiEndpoint);
-    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+    const response = await fetch(apiEndpoint, { signal: controller.signal });
+    clearTimeout(timeoutId);
+
+    if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
 
     const repos = await response.json();
 
     if (!repos || repos.length === 0) {
-      container.innerHTML = `<p class="text-muted">No public telemetry feeds available.</p>`;
+      container.innerHTML = `<p class="text-muted">No public streams found.</p>`;
       return;
     }
 
-    // Render dynamically fetched repo cards
     container.innerHTML = repos.map((repo) => `
       <article class="card telemetry-card">
         <div>
@@ -213,14 +195,8 @@ async function initGitHubTelemetry() {
           </div>
           <p>${repo.description || "Active public repository stream."}</p>
         </div>
-
         <div class="repo-meta">
-          ${repo.language ? `
-            <span class="lang-badge">
-              <span class="lang-dot"></span>
-              ${repo.language}
-            </span>
-          ` : ""}
+          ${repo.language ? `<span class="lang-badge"><span class="lang-dot"></span>${repo.language}</span>` : ""}
           <span>⭐ ${repo.stargazers_count}</span>
           <span>Updated: ${new Date(repo.updated_at).toLocaleDateString()}</span>
         </div>
@@ -228,20 +204,24 @@ async function initGitHubTelemetry() {
     `).join("");
 
   } catch (error) {
-    console.warn("GitHub API Limit or Offline state:", error);
-    // Graceful fallback display
+    clearTimeout(timeoutId);
+    console.warn("Telemetry fallback active:", error);
     container.innerHTML = `
       <article class="card telemetry-card">
-        <p><strong>System Status: Offline / Rate Limited</strong></p>
-        <p>Live telemetry telemetry sync paused. All static modules remain functional.</p>
+        <div>
+          <div class="repo-header">
+            <a href="https://github.com/davenwer" target="_blank" rel="noopener" class="repo-title">
+              ⚡ davenwer.github.io
+            </a>
+          </div>
+          <p>Primary web platform & deployment pipeline repository.</p>
+        </div>
+        <div class="repo-meta">
+          <span class="lang-badge"><span class="lang-dot"></span>JavaScript</span>
+          <span>⭐ 1</span>
+          <span>Status: Live</span>
+        </div>
       </article>
     `;
   }
-}
-
-// Call on DOM Load
-document.addEventListener("DOMContentLoaded", () => {
-  initGitHubTelemetry();
-});
-
 }
