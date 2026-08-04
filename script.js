@@ -323,24 +323,37 @@ function initCommandTerminal() {
       return "SYSTEM STATUS: All systems operational | Telemetry: Live via GitHub API";
     }
     
-    // Dynamic Theme Toggle (Direct CSS Property Override)
+     // Dynamic Theme Toggle (Guaranteed Visual Override)
     if (q.includes("theme")) {
-      const isAlt = document.body.classList.toggle("alt-theme");
-      const root = document.documentElement;
+      let styleTag = document.getElementById("theme-override");
+      if (!styleTag) {
+        styleTag = document.createElement("style");
+        styleTag.id = "theme-override";
+        document.head.appendChild(styleTag);
+      }
 
-      if (isAlt) {
-        // Switch to Terminal Emerald Theme
-        root.style.setProperty("--accent-color", "#3fb950");
-        root.style.setProperty("--bg-hover", "rgba(63, 185, 80, 0.15)");
-        root.style.setProperty("--text-primary", "#2ea44f");
+      const isEmerald = document.body.classList.toggle("emerald-mode");
+
+      if (isEmerald) {
+        styleTag.textContent = `
+          :root, body {
+            --accent-color: #3fb950 !important;
+            --bg-hover: rgba(63, 185, 80, 0.15) !important;
+            --text-primary: #3fb950 !important;
+          }
+          a, .repo-title, .tag, h1, h2, h3, h4, .user-msg, #cli-trigger, #cli-mic-btn {
+            color: #3fb950 !important;
+          }
+          .tag, button, input, .card, #cli-drawer {
+            border-color: rgba(63, 185, 80, 0.4) !important;
+          }
+        `;
         return "🎨 Theme switched: **Terminal Emerald**";
       } else {
-        // Restore Default Theme
-        root.style.removeProperty("--accent-color");
-        root.style.removeProperty("--bg-hover");
-        root.style.removeProperty("--text-primary");
+        styleTag.textContent = "";
         return "🎨 Theme restored: **Slate Dark Default**";
       }
+
     }
 
     if (q.startsWith("goto ")) {
