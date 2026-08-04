@@ -1,34 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
-<head> 
+<head>
   <!-- Primary Meta Tags -->
-<title>Okennachukwu Enwerem | Systems Engineering, Marketing Analytics & AI Workflows</title>
-<meta name="title" content="Okennachukwu Enwerem | Systems Engineering, Marketing Analytics & AI Workflows">
-<meta name="description" content="Portfolio of Okennachukwu Enwerem—specializing in systems engineering, e-commerce infrastructure, performance marketing analytics, and AI workflow automation.">
+  <title>Okennachukwu Enwerem | Systems Engineering, Marketing Analytics & AI Workflows</title>
+  <meta name="title" content="Okennachukwu Enwerem | Systems Engineering, Marketing Analytics & AI Workflows">
+  <meta name="description" content="Portfolio of Okennachukwu Enwerem—specializing in systems engineering, e-commerce infrastructure, performance marketing analytics, and AI workflow automation.">
 
-<!-- Open Graph / Facebook / LinkedIn -->
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://davenwer.github.io/">
-<meta property="og:title" content="Okennachukwu Enwerem | Systems Engineering & AI Workflows">
-<meta property="og:description" content="Portfolio showcasing algorithmic trading engines, e-commerce infrastructure, and automated workflow architecture.">
-<meta property="og:image" content="https://davenwer.github.io/icon-512.png">
+  <!-- Open Graph / Facebook / LinkedIn -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://davenwer.github.io/">
+  <meta property="og:title" content="Okennachukwu Enwerem | Systems Engineering & AI Workflows">
+  <meta property="og:description" content="Portfolio showcasing algorithmic trading engines, e-commerce infrastructure, and automated workflow architecture.">
+  <meta property="og:image" content="https://davenwer.github.io/icon-512.png">
 
-<!-- Twitter / X -->
-<meta property="twitter:card" content="summary_large_image">
-<meta property="twitter:url" content="https://davenwer.github.io/">
-<meta property="twitter:title" content="Okennachukwu Enwerem | Portfolio">
-<meta property="twitter:description" content="Systems engineering, e-commerce infrastructure, performance marketing analytics, and AI workflow automation.">
-<meta property="twitter:image" content="https://davenwer.github.io/icon-512.png">
+  <!-- Twitter / X -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://davenwer.github.io/">
+  <meta property="twitter:title" content="Okennachukwu Enwerem | Portfolio">
+  <meta property="twitter:description" content="Systems engineering, e-commerce infrastructure, performance marketing analytics, and AI workflow automation.">
+  <meta property="twitter:image" content="https://davenwer.github.io/icon-512.png">
 
   <!-- Mobile PWA & Web App Capable Meta Tags -->
-<meta name="theme-color" content="#0f172a" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#0f172a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="manifest" href="manifest.json" />
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Project-Kreer | Vault Core</title>
+
   <style>
     :root {
       --bg: #0d1117;
@@ -36,6 +36,7 @@
       --accent: #58a6ff;
       --text: #c9d1d9;
       --success: #3fb950;
+      --border: #30363d;
     }
     body {
       background-color: var(--bg);
@@ -50,10 +51,22 @@
     }
     .container {
       width: 100%;
-      max-width: 500px;
+      max-width: 600px;
+    }
+    header nav {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 10px;
+    }
+    header nav a {
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.9rem;
     }
     .header {
-      border-bottom: 1px solid #30363d;
+      border-bottom: 1px solid var(--border);
       padding-bottom: 15px;
       margin-bottom: 20px;
     }
@@ -74,7 +87,7 @@
     }
     .card {
       background: var(--card);
-      border: 1px solid #30363d;
+      border: 1px solid var(--border);
       border-radius: 8px;
       padding: 16px;
       margin-bottom: 15px;
@@ -90,169 +103,375 @@
       color: #8b949e;
       margin-bottom: 0;
     }
+    textarea {
+      width: 100%;
+      height: 80px;
+      background: #090d11;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      padding: 10px;
+      box-sizing: border-box;
+      font-family: inherit;
+      resize: none;
+      margin-bottom: 10px;
+      margin-top: 10px;
+    }
+    .vault-btn {
+      width: 100%;
+      background: #238636;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+    .vault-btn:active {
+      background: #2ea043;
+    }
+    .entry-list {
+      margin-top: 10px;
+    }
+    .entry-item {
+      background: #090d11;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px;
+      margin-bottom: 8px;
+      font-size: 0.85rem;
+      word-break: break-word;
+    }
+    .grid {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 10px;
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .date, .company {
+      font-size: 0.8rem;
+      color: var(--accent);
+    }
+    .tag-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .tag {
+      background: #21262d;
+      color: var(--text);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      border: 1px solid var(--border);
+    }
+    .contact-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    .btn {
+      padding: 10px 16px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+    .btn-primary { background: #238636; color: white; }
+    .btn-secondary { background: #21262d; color: var(--text); border: 1px solid var(--border); }
+    
+    /* CLI Drawer Styles */
+    .cli-floating-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--accent);
+      color: var(--bg);
+      border: none;
+      padding: 10px 16px;
+      border-radius: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      z-index: 1000;
+    }
+    .cli-drawer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      max-height: 50vh;
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      display: none;
+      flex-direction: column;
+      z-index: 1001;
+      box-sizing: border-box;
+      padding: 15px;
+    }
+    .cli-drawer[aria-hidden="false"] {
+      display: flex;
+    }
+    .cli-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      color: var(--accent);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+    .cli-close-btn {
+      background: none;
+      border: none;
+      color: var(--text);
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+    .cli-output {
+      overflow-y: auto;
+      max-height: 150px;
+      margin: 10px 0;
+      font-size: 0.85rem;
+    }
+    .cli-quick-commands {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    .cli-pill {
+      background: #21262d;
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+    .cli-input-form {
+      display: flex;
+      align-items: center;
+      background: #090d11;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 10px;
+    }
+    .cli-prompt {
+      color: var(--success);
+      margin-right: 8px;
+      font-weight: bold;
+    }
+    .cli-input-form input {
+      background: none;
+      border: none;
+      color: var(--text);
+      width: 100%;
+      outline: none;
+      font-family: inherit;
+      font-size: 0.9rem;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="header">
-      <h1>PROJECT-KREER</h1>
-      <div class="status-badge">● SYSTEM ONLINE (YEAR 1)</div>
-      <div class="system-status">
-  <span class="status-indicator"></span>
-  <span id="live-clock">SYSTEM ONLINE</span>
-</div>
-    </div>
+    <header>
+      <nav>
+        <a href="#about">About</a>
+        <a href="#experience">Experience</a>
+        <a href="#projects">Projects</a>
+        <a href="#vault-section">Vault Core</a>
+      </nav>
+    </header>
 
-    <div class="card">
-      <h3>Vault Module 0.1</h3>
-      <p>Cryptographic Identity & Local Data Storage initialized. Awaiting cryptographic key setup.</p>
-    </div>
+    <main>
+      <section id="hero" class="header">
+        <h1>PROJECT-KREER</h1>
+        <div class="status-badge">● SYSTEM ONLINE (YEAR 1)</div>
+        <p style="margin-top: 10px;">Building scalable systems, data workflows, and modern web solutions.</p>
+      </section>
 
-    <div class="card">
-      <h3>Build Cadence</h3>
-      <p>Mobile-first architecture powered by voice intent and daily micro-commits.</p>
-    </div>
+      <!-- Local Storage Vault Module (Option A Integration) -->
+      <section id="vault-section">
+        <div class="card">
+          <h3>Vault Module 0.1 (Local Memory)</h3>
+          <p>Cryptographic Identity & Local Data Storage initialized securely in browser memory.</p>
+          <textarea id="vaultInput" placeholder="Use voice-to-text or type private notes here..."></textarea>
+          <button class="vault-btn" onclick="saveToVault()">Store in Phone Memory</button>
+        </div>
+
+        <div class="card">
+          <h3>Encrypted Local Entries</h3>
+          <div id="vaultDisplay" class="entry-list">
+            <div style="color: #8b949e; font-size: 0.85rem;">No local entries found.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Experience Section -->
+      <section id="experience">
+        <h2>Experience</h2>
+        <div class="grid">
+          <article class="card">
+            <div class="card-header">
+              <h3>Marketing & Systems Lead</h3>
+              <span class="date">2019 — 2021</span>
+            </div>
+            <p class="company">Olist</p>
+            <p>Led growth initiatives, systems testing, and data accuracy workflows to optimize multi-channel performance marketing operations.</p>
+            <div class="tag-container">
+              <span class="tag">Data Analytics</span>
+              <span class="tag">Systems Testing</span>
+              <span class="tag">Growth Marketing</span>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="card-header">
+              <h3>E-Commerce Operations & Strategy</h3>
+              <span class="date">2021 — Present</span>
+            </div>
+            <p class="company">Independent / Consulting</p>
+            <p>Architected storefront listings, product catalog data structures, and authorization workflows across global e-commerce channels.</p>
+            <div class="tag-container">
+              <span class="tag">Catalog Management</span>
+              <span class="tag">Amazon Seller Central</span>
+              <span class="tag">Operations</span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- Projects Section -->
+      <section id="projects">
+        <h2>Projects</h2>
+        <div class="grid">
+          <article class="card project-card">
+            <h3>Algorithmic Trading Agent</h3>
+            <p>Autonomous trading framework integrating DeepSeek reasoning models with the Alpaca API for paper trading and backtesting financial strategies.</p>
+            <div class="tag-container">
+              <span class="tag">Python</span>
+              <span class="tag">Alpaca API</span>
+              <span class="tag">DeepSeek</span>
+              <span class="tag">FinTech</span>
+            </div>
+          </article>
+
+          <article class="card project-card">
+            <h3>Multi-Agent Workflow Engine</h3>
+            <p>Simulation configuration and multi-agent coordination system designed for automated task execution and complex data pipelines.</p>
+            <div class="tag-container">
+              <span class="tag">AI Workflows</span>
+              <span class="tag">Multi-Agent Systems</span>
+              <span class="tag">Automation</span>
+            </div>
+          </article>
+
+          <article class="card project-card">
+            <h3>Yahands E-Commerce & Web Infrastructure</h3>
+            <p>End-to-end storefront architecture, automated listing management, and promotional graphics engine for online operations.</p>
+            <div class="tag-container">
+              <span class="tag">Web Architecture</span>
+              <span class="tag">E-Commerce</span>
+              <span class="tag">CI/CD</span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- System Telemetry Section (Live GitHub API) -->
+      <section id="telemetry" style="margin-top: 20px;">
+        <h2>System Telemetry</h2>
+        <p>Real-time feed fetched dynamically from GitHub API endpoints.</p>
+        <div id="telemetry-feed" class="grid" style="margin-top: 10px;">
+          <div class="card telemetry-card loading">
+            <p>📡 Fetching live telemetry from GitHub...</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Contact & Signal Drawer Section -->
+      <section id="contact" style="margin-top: 20px;">
+        <h2>Signal & Contact</h2>
+        <p>Available for systems engineering, performance marketing analytics, and AI workflow collaborations.</p>
+        <div class="contact-actions">
+          <a href="mailto:info@yahands.com" class="btn btn-primary">✉️ Direct Message</a>
+          <a href="https://github.com/davenwer" target="_blank" rel="noopener" class="btn btn-secondary">🐙 GitHub Profile</a>
+        </div>
+      </section>
+    </main>
+
+    <footer style="margin-top: 30px; text-align: center; border-top: 1px solid var(--border); padding-top: 15px;">
+      <p>&copy; 2026 Project-Kreer. All rights reserved.</p>
+    </footer>
   </div>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Project-Kreer</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <header>
-    <nav>
-      <a href="#about">About</a>
-      <a href="#experience">Experience</a>
-      <a href="#projects">Projects</a>
-    </nav>
-  </header>
 
-  <main>
-    <section id="hero">
-      <h1>Welcome to Project-Kreer</h1>
-      <p>Building scalable systems, data workflows, and modern web solutions.</p>
-    </section>
-
-    <!-- Experience Section -->
-<section id="experience">
-  <h2>Experience</h2>
-  <div class="grid">
-    <article class="card">
-      <div class="card-header">
-        <h3>Marketing & Systems Lead</h3>
-        <span class="date">2019 — 2021</span>
-      </div>
-      <p class="company">Olist</p>
-      <p>Led growth initiatives, systems testing, and data accuracy workflows to optimize multi-channel performance marketing operations.</p>
-      <div class="tag-container">
-        <span class="tag">Data Analytics</span>
-        <span class="tag">Systems Testing</span>
-        <span class="tag">Growth Marketing</span>
-      </div>
-    </article>
-
-    <article class="card">
-      <div class="card-header">
-        <h3>E-Commerce Operations & Strategy</h3>
-        <span class="date">2021 — Present</span>
-      </div>
-      <p class="company">Independent / Consulting</p>
-      <p>Architected storefront listings, product catalog data structures, and authorization workflows across global e-commerce channels.</p>
-      <div class="tag-container">
-        <span class="tag">Catalog Management</span>
-        <span class="tag">Amazon Seller Central</span>
-        <span class="tag">Operations</span>
-      </div>
-    </article>
-  </div>
-</section>
-
-<!-- Projects Section -->
-<section id="projects">
-  <h2>Projects</h2>
-  <div class="grid">
-    <article class="card project-card">
-      <h3>Algorithmic Trading Agent</h3>
-      <p>Autonomous trading framework integrating DeepSeek reasoning models with the Alpaca API for paper trading and backtesting financial strategies.</p>
-      <div class="tag-container">
-        <span class="tag">Python</span>
-        <span class="tag">Alpaca API</span>
-        <span class="tag">DeepSeek</span>
-        <span class="tag">FinTech</span>
-      </div>
-    </article>
-
-    <article class="card project-card">
-      <h3>Multi-Agent Workflow Engine</h3>
-      <p>Simulation configuration and multi-agent coordination system designed for automated task execution and complex data pipelines.</p>
-      <div class="tag-container">
-        <span class="tag">AI Workflows</span>
-        <span class="tag">Multi-Agent Systems</span>
-        <span class="tag">Automation</span>
-      </div>
-    </article>
-
-    <article class="card project-card">
-      <h3>Yahands E-Commerce & Web Infrastructure</h3>
-      <p>End-to-end storefront architecture, automated listing management, and promotional graphics engine for online operations.</p>
-      <div class="tag-container">
-        <span class="tag">Web Architecture</span>
-        <span class="tag">E-Commerce</span>
-        <span class="tag">CI/CD</span>
-      </div>
-    </article>
-  </div>
-</section>
-    <!-- System Telemetry Section (Live GitHub API) -->
-<section id="telemetry">
-  <h2>System Telemetry</h2>
-  <p>Real-time feed fetched dynamically from GitHub API endpoints.</p>
-  
-  <div id="telemetry-feed" class="grid">
-    <!-- Loading state indicator -->
-    <div class="card telemetry-card loading">
-      <p>📡 Fetching live telemetry from GitHub...</p>
-    </div>
-  </div>
-</section>
-
-<!-- Contact & Signal Drawer Section -->
-<section id="contact">
-  <h2>Signal & Contact</h2>
-  <p>Available for systems engineering, performance marketing analytics, and AI workflow collaborations.</p>
-  
-  <div class="contact-actions">
-    <a href="mailto:info@yahands.com" class="btn btn-primary">
-      ✉️ Direct Message
-    </a>
-    <a href="https://github.com/davenwer" target="_blank" rel="noopener" class="btn btn-secondary">
-      🐙 GitHub Profile
-    </a>
-  </div>
-</section>
-
-  </main>
-
-  <footer>
-    <p>&copy; 2026 Project-Kreer. All rights reserved.</p>
-  </footer>
-    <!-- Link Interactive Engine -->
+  <!-- Scripts -->
   <script src="script.js" defer></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", loadVault);
+
+    function saveToVault() {
+      const input = document.getElementById("vaultInput");
+      const text = input.value.trim();
+      if (!text) return;
+
+      let entries = JSON.parse(localStorage.getItem("kreer_vault") || "[]");
+      entries.unshift({ text: text, timestamp: new Date().toLocaleString() });
+      
+      localStorage.setItem("kreer_vault", JSON.stringify(entries));
+      input.value = "";
+      loadVault();
+    }
+
+    function loadVault() {
+      const display = document.getElementById("vaultDisplay");
+      if (!display) return;
+      let entries = JSON.parse(localStorage.getItem("kreer_vault") || "[]");
+
+      if (entries.length === 0) {
+        display.innerHTML = '<div style="color: #8b949e; font-size: 0.85rem;">No local entries found.</div>';
+        return;
+      }
+
+      display.innerHTML = entries.map(e => `
+        <div class="entry-item">
+          <div>${e.text}</div>
+          <div style="color: #8b949e; font-size: 0.7rem; margin-top: 4px;">${e.timestamp}</div>
+        </div>
+      `).join('');
+    }
+
+    // CLI Drawer Toggle Support
+    const cliTrigger = document.getElementById("cli-trigger");
+    const cliDrawer = document.getElementById("cli-drawer");
+    const cliClose = document.getElementById("cli-close");
+
+    if (cliTrigger && cliDrawer && cliClose) {
+      cliTrigger.addEventListener("click", () => {
+        cliDrawer.setAttribute("aria-hidden", "false");
+      });
+      cliClose.addEventListener("click", () => {
+        cliDrawer.setAttribute("aria-hidden", "true");
+      });
+    }
+  </script>
+
   <!-- Project Detail Modal Container -->
   <div id="project-modal" class="modal-overlay" aria-hidden="true">
     <div class="modal-card">
       <button class="modal-close" id="modal-close-btn" aria-label="Close modal">&times;</button>
-      <div id="modal-body">
-        <!-- Content gets injected dynamically via JS -->
-      </div>
+      <div id="modal-body"></div>
     </div>
   </div>
-   <!-- Floating AI Chatbot & Command Terminal -->
+
+  <!-- Floating AI Chatbot & Command Terminal -->
   <button id="cli-trigger" class="cli-floating-btn" aria-label="Open AI Assistant">
     🤖 Assistant
   </button>
@@ -281,6 +500,5 @@
       <input type="text" id="cli-input" placeholder="Ask a question or type a command..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
     </form>
   </div>
-
 </body>
 </html>
