@@ -1,132 +1,75 @@
 /* ==========================================================================
-   Project-Kreer: Starter Stylesheet
+   Project-Kreer Master Mobile Stylesheet
    ========================================================================== */
 
-/* 1. Global Custom Properties (Design System Tokens) */
 :root {
-  /* Colors */
-  --bg-primary: #0f172a;       /* Dark slate background */
-  --bg-surface: #1e293b;       /* Card/surface background */
-  --bg-hover: #334155;         /* Subtle hover state */
-  --text-main: #f8fafc;        /* High-contrast text */
-  --text-muted: #94a3b8;       /* Subtle text */
-  --accent-color: #38bdf8;     /* Sky blue accent */
-  --border-color: #334155;     /* Structural borders */
-
-  /* Typography */
-  --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-
-  /* Layout & Animation */
-  --max-width: 1000px;
-  --radius: 8px;
-  --transition: all 0.2s ease-in-out;
+  --bg-primary: #0f172a;
+  --bg-surface: #1e293b;
+  --bg-hover: #334155;
+  --accent-color: #38bdf8;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --border-color: #334155;
+  --radius: 12px;
+  --transition: all 0.25s ease-in-out;
 }
 
-/* 2. CSS Reset & Base Rules */
-*, *::before, *::after {
+body.green-theme {
+  --accent-color: #34d399;
+  --bg-primary: #022c22;
+  --bg-surface: #064e3b;
+  --bg-hover: #047857;
+  --border-color: #047857;
+}
+
+* {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-html {
-  scroll-behavior: smooth;
-}
-
 body {
-  font-family: var(--font-main);
   background-color: var(--bg-primary);
   color: var(--text-main);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   line-height: 1.6;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  padding: 1.25rem;
+  padding-bottom: 6rem;
 }
 
-/* 3. Structural Containers */
-header, main, footer {
-  width: 100%;
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: 0 1.5rem;
-}
-
-main {
-  flex: 1;
-}
-
-/* 4. Navigation */
-header {
-  padding-top: 1.5rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid var(--border-color);
-}
-
-nav {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1.5rem;
-}
-
-nav a {
-  color: var(--text-muted);
-  text-decoration: none;
-  font-weight: 500;
-  transition: var(--transition);
-}
-
-nav a:hover {
+a {
   color: var(--accent-color);
 }
 
-/* 5. Headings & Content Typography */
-section {
-  padding: 4rem 0;
+/* Header & Typography */
+header {
+  margin-bottom: 2rem;
   border-bottom: 1px solid var(--border-color);
-}
-
-section:last-of-type {
-  border-bottom: none;
-}
-
-h1, h2, h3 {
-  color: var(--text-main);
-  line-height: 1.2;
+  padding-bottom: 1rem;
 }
 
 h1 {
-  font-size: 2.75rem;
-  margin-bottom: 1rem;
+  font-size: 1.75rem;
+  color: var(--text-main);
 }
 
 h2 {
-  font-size: 1.75rem;
+  font-size: 1.35rem;
   color: var(--accent-color);
-  margin-bottom: 1.5rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
 }
 
-p {
-  color: var(--text-muted);
-  margin-bottom: 1rem;
+section {
+  margin-bottom: 2.5rem;
 }
 
-/* 6. Hero Section */
-#hero {
-  padding-top: 5rem;
-  padding-bottom: 5rem;
-}
-
-#hero p {
-  font-size: 1.25rem;
-  max-width: 650px;
-}
-
-/* 7. Reusable Card Grid (Ideal for Projects & Experience) */
+/* Grids & Cards */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
-  margin-top: 1.5rem;
+  gap: 1.25rem;
+  margin-top: 1rem;
 }
 
 .card {
@@ -137,203 +80,19 @@ p {
   transition: var(--transition);
 }
 
-.card:hover {
-  border-color: var(--accent-color);
-  transform: translateY(-2px);
-}
-
-/* 8. Footer */
-footer {
-  padding: 2.5rem 1.5rem;
-  text-align: center;
-  color: var(--text-muted);
-  font-size: 0.875rem;
-  border-top: 1px solid var(--border-color);
-}
-
-/* 9. Mobile Responsiveness */
-@media (max-width: 600px) {
-  #hero h1 {
-    font-size: 2.25rem;
-  }
-
-  nav {
-    justify-content: center;
-  }
-}
-/* Card Header & Metadata Layout */
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 1rem;
-}
-
-.company {
-  color: var(--accent-color);
-  font-weight: 500;
-  font-size: 0.95rem;
-  margin-bottom: 0.5rem;
-}
-
-.date {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  white-space: nowrap;
-}
-
-/* Technology / Skill Tags */
-.tag-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 1rem;
-}
-
-.tag {
-  background-color: var(--bg-hover);
-  color: var(--accent-color);
-  font-size: 0.75rem;
-  font-weight: 500;
-  padding: 0.25rem 0.65rem;
-  border-radius: 12px;
-  border: 1px solid var(--border-color);
-   /* Active Nav Indicator */
-nav a.active {
-  color: var(--accent-color);
-  font-weight: 700;
-  border-bottom: 2px solid var(--accent-color);
-}
-
-.tag {
-  cursor: pointer;
-  user-select: none;
-  transition: var(--transition);
-}
-/* ==========================================================================
-   Mobile Viewport & Safe Area Adjustments
-   ========================================================================== */
-
-/* 1. Prevent top notch collision using safe area insets */
-header {
-  padding-top: max(1.5rem, env(safe-area-inset-top, 20px));
-}
-
-/* 2. Add extra padding at the bottom so content isn't covered by the mobile URL bar */
-main {
-  padding-bottom: 5rem;
-}
-
-/* 3. Stack card title and date vertically on small screens */
-@media (max-width: 480px) {
-  .card-header {
-    flex-direction: column;
-    gap: 0.25rem;
-  }
-}
-/* ==========================================================================
-   Project Detail Modal Overlay (Mobile-First)
-   ========================================================================== */
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(15, 23, 42, 0.85);
-  backdrop-filter: blur(8px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-  padding: 1.25rem;
-}
-
-.modal-overlay.active {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.modal-card {
-  background-color: var(--bg-surface);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius);
-  width: 100%;
-  max-width: 550px;
-  max-height: 80vh;
-  overflow-y: auto;
-  padding: 2rem 1.5rem;
-  position: relative;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.6);
-  transform: translateY(20px);
-  transition: transform 0.3s ease;
-}
-
-.modal-overlay.active .modal-card {
-  transform: translateY(0);
-}
-
-.modal-close {
-  position: absolute;
-  top: 1rem;
-  right: 1.25rem;
-  background: transparent;
-  border: none;
-  color: var(--text-muted);
-  font-size: 2rem;
-  cursor: pointer;
-  line-height: 1;
-}
-
-.modal-close:hover {
-  color: var(--accent-color);
-}
-
 .project-card {
   cursor: pointer;
 }
 
-.modal-body h3 {
-  color: var(--accent-color);
-  font-size: 1.5rem;
-  margin-bottom: 0.75rem;
-}
-
-.modal-body h4 {
-  color: var(--text-main);
-  font-size: 1rem;
-  margin-top: 1.25rem;
-  margin-bottom: 0.5rem;
-}
-
-.modal-body ul {
-  padding-left: 1.25rem;
-  color: var(--text-muted);
-  font-size: 0.9rem;
-}
-
-.modal-body ul li {
-  margin-bottom: 0.4rem;
-}
-
-/* ==========================================================================
-   Contact Buttons & Link Overrides
-   ========================================================================== */
-
+/* Contact Section & Button Overrides */
 .contact-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
-  margin-top: 1.5rem;
+  margin-top: 1.25rem;
 }
 
-.btn, 
-a.btn, 
-a.btn:visited {
+.btn, a.btn, a.btn:visited {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -346,52 +105,29 @@ a.btn:visited {
   cursor: pointer;
 }
 
-.btn-primary, 
-a.btn-primary {
+.btn-primary, a.btn-primary {
   background-color: var(--accent-color) !important;
   color: var(--bg-primary) !important;
   border: 1px solid var(--accent-color);
 }
 
-.btn-primary:hover {
-  opacity: 0.9;
-  transform: translateY(-2px);
-}
-
-.btn-secondary, 
-a.btn-secondary {
+.btn-secondary, a.btn-secondary {
   background-color: var(--bg-surface) !important;
   color: var(--text-main) !important;
   border: 1px solid var(--border-color);
 }
 
-.btn-secondary:hover {
-  border-color: var(--accent-color);
-  color: var(--accent-color) !important;
-  transform: translateY(-2px);
-}
-
 @media (max-width: 480px) {
   .btn {
-    width: 100%; /* Full width touch targets on mobile */
+    width: 100%;
   }
 }
 
-
-/* ==========================================================================
-   System Telemetry & Live GitHub Feed
-   ========================================================================== */
-
+/* Telemetry Card Specs */
 .telemetry-card {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-}
-
-.telemetry-card.loading {
-  text-align: center;
-  color: var(--accent-color);
-  font-style: italic;
 }
 
 .repo-header {
@@ -406,10 +142,6 @@ a.btn-secondary {
   font-size: 1.1rem;
   font-weight: 600;
   text-decoration: none;
-}
-
-.repo-title:hover {
-  color: var(--accent-color);
 }
 
 .repo-meta {
@@ -433,48 +165,46 @@ a.btn-secondary {
   border-radius: 50%;
   background-color: var(--accent-color);
 }
-/* ==========================================================================
-   Chatbot & Terminal Dual Mode Styling
-   ========================================================================== */
 
+/* Floating AI Assistant Trigger Button */
 .cli-floating-btn {
-  position: fixed;
-  bottom: 1.5rem;
-  right: 1.5rem;
-  background-color: var(--accent-color);
-  color: var(--bg-primary);
-  border: none;
-  padding: 0.65rem 1rem;
-  border-radius: 20px;
+  position: fixed !important;
+  bottom: 1.5rem !important;
+  right: 1.5rem !important;
+  background-color: var(--accent-color) !important;
+  color: var(--bg-primary) !important;
+  border: none !important;
+  padding: 0.75rem 1.25rem !important;
+  border-radius: 25px !important;
   font-family: monospace;
   font-weight: 700;
-  font-size: 0.9rem;
-  box-shadow: 0 4px 14px rgba(56, 189, 248, 0.4);
-  z-index: 999;
+  font-size: 0.95rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  z-index: 9999 !important;
   cursor: pointer;
-  transition: var(--transition);
 }
 
+/* Floating Chatbot Drawer Overlay */
 .cli-drawer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  max-height: 70vh;
-  background-color: #020617;
-  border-top: 2px solid var(--accent-color);
-  box-shadow: 0 -10px 25px rgba(0, 0, 0, 0.8);
-  z-index: 1001;
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  max-height: 70vh !important;
+  background-color: #020617 !important;
+  border-top: 2px solid var(--accent-color) !important;
+  box-shadow: 0 -10px 25px rgba(0, 0, 0, 0.9);
+  z-index: 10000 !important;
   display: flex;
   flex-direction: column;
   padding: 1rem;
   font-family: monospace;
-  transform: translateY(100%);
+  transform: translateY(100%) !important;
   transition: transform 0.3s ease-in-out;
 }
 
 .cli-drawer.active {
-  transform: translateY(0);
+  transform: translateY(0) !important;
 }
 
 .cli-header {
@@ -500,7 +230,7 @@ a.btn-secondary {
   flex: 1;
   overflow-y: auto;
   min-height: 120px;
-  max-height: 180px;
+  max-height: 200px;
   font-size: 0.85rem;
   line-height: 1.4;
   margin-bottom: 0.75rem;
@@ -519,10 +249,6 @@ a.btn-secondary {
   margin-bottom: 0.5rem;
 }
 
-.cli-output strong {
-  color: #ffffff;
-}
-
 .cli-quick-commands {
   display: flex;
   gap: 0.5rem;
@@ -536,7 +262,7 @@ a.btn-secondary {
   color: var(--accent-color);
   border: 1px solid var(--border-color);
   border-radius: 12px;
-  padding: 0.25rem 0.65rem;
+  padding: 0.35rem 0.75rem;
   font-size: 0.75rem;
   font-family: monospace;
   white-space: nowrap;
@@ -568,11 +294,49 @@ a.btn-secondary {
   width: 100%;
 }
 
-body.green-theme {
-  --accent-color: #34d399;
-  --bg-primary: #022c22;
-  --bg-surface: #064e3b;
-  --border-color: #047857;
+/* Interactive Project Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  padding: 1.25rem;
 }
 
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  width: 100%;
+  max-width: 550px;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: 2rem 1.5rem;
+  position: relative;
+}
+
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1.25rem;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 2rem;
+  cursor: pointer;
 }
