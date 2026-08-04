@@ -1,47 +1,133 @@
 /* ==========================================================================
-   Project-Kreer Master Script Engine (Smart Intent Engine v2.2 - Mobile & Voice Enabled)
+   Project-Kreer Master Script Engine (W3C EDV & Smart Intent Engine v2.2)
    ========================================================================== */
 
-document.addEventListener("DOMContentLoaded", async () => {
-  initLiveClock();
-  initTagFilter();
-  initScrollSpy();
-  initProjectModals();
-  initGitHubTelemetry();
-  initCommandTerminal();
-  loadVault();
-  // Initialize IndexedDB EDV Vault
-  if (window.coreVault) {
-    await window.coreVault.initDB();
-    renderVaultUI();
+/* --------------------------------------------------------------------------
+   0. Core Data Vault Class (W3C EDV Standard Implementation)
+   -------------------------------------------------------------------------- */
+class CoreDataVault {
+  constructor() {
+    this.dbName = "kreer_core_vault_db";
+    this.storeName = "encrypted_records";
+    this.db = null;
+    this.vaultKey = null;
   }
 
-  // CLI Drawer Logic
-  const cliTrigger = document.getElementById("cli-trigger");
-  const cliDrawer = document.getElementById("cli-drawer");
-  const cliClose = document.getElementById("cli-close");
-
-  if (cliTrigger && cliDrawer) {
-    cliTrigger.addEventListener("click", (e) => {
-      e.preventDefault();
-      const isHidden = cliDrawer.getAttribute("aria-hidden") === "true";
-      cliDrawer.setAttribute("aria-hidden", isHidden ? "false" : "true");
+  async initDB() {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open(this.dbName, 1);
+      request.onupgradeneeded = (e) => {
+        const db = e.target.result;
+        if (!db.objectStoreNames.contains(this.storeName)) {
+          db.createObjectStore(this.storeName, { keyPath: "id" });
+        }
+      };
+      request.onsuccess = (e) => {
+        this.db = e.target.result;
+        resolve(this.db);
+      };
+      request.onerror = (e) => reject("DB Initialization Error: " + e.target.error);
     });
   }
 
-  if (cliClose && cliDrawer) {
-    cliClose.addEventListener("click", (e) => {
-      e.preventDefault();
-      cliDrawer.setAttribute("aria-hidden", "true");
+  async deriveVaultKey(secretPassphrase, saltString = "kreer_vault_salt") {
+    const enc = new TextEncoder();
+    const keyMaterial = await crypto.subtle.importKey(
+      "raw",
+      enc.encode(secretPassphrase),
+      "PBKDF2",
+      false,
+      ["deriveKey"]
+    );
+
+    this.vaultKey = await crypto.subtle.deriveKey(
+      {
+        name: "PBKDF2",
+        salt: enc.encode(saltString),
+        iterations: 100000,
+        hash: "SHA-256"
+      },
+      keyMaterial,
+      { name: "AES-GCM", length: 256 },
+      false,
+      ["encrypt", "decrypt"]
+    );
+
+    return this.vaultKey;
+  }
+
+  async storeEncryptedRecord(payloadText) {
+    if (!this.vaultKey) throw new Error("Vault unlocked key missing!");
+
+    const enc = new TextEncoder();
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+
+    const ciphertextBuffer = await crypto.subtle.encrypt(
+      { name: "AES-GCM", iv: iv },
+      this.vaultKey,
+      enc.encode(payloadText)
+    );
+
+    const edvDocument = {
+      id: "edv_" + Date.now() + "_" + Math.random().toString(36).substr(2, 5),
+      timestamp: new Date().toISOString(),
+      iv: Array.from(iv),
+      ciphertext: Array.from(new Uint8Array(ciphertextBuffer))
+    };
+
+    return new Promise((resolve, reject) => {
+      const transaction = this.db.transaction([this.storeName], "readwrite");
+      const store = transaction.objectStore(this.storeName);
+      const request = store.add(edvDocument);
+
+      request.onsuccess = () => resolve(edvDocument);
+      request.onerror = (e) => reject("Failed to save record: " + e.target.error);
     });
   }
-});
 
-document.addEventListener("DOMContentLoaded", async () => {
-  await window.coreVault.initDB();
-  renderVaultUI();
-});
+  async decryptRecord(edvDocument) {
+    if (!this.vaultKey) throw new Error("Vault unlocked key missing!");
 
+    const iv = new Uint8Array(edvDocument.iv);
+    const ciphertext = new Uint8Array(edvDocument.ciphertext);
+
+    const decryptedBuffer = await crypto.subtle.decrypt(
+      { name: "AES-GCM", iv: iv },
+      this.vaultKey,
+      ciphertext
+    );
+
+    return new TextDecoder().decode(decryptedBuffer);
+  }
+
+  async getAllRecords() {
+    return new Promise((resolve, reject) => {
+      const transaction = this.db.transaction([this.storeName], "readonly");
+      const store = transaction.objectStore(this.storeName);
+      const request = store.getAll();
+
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = (e) => reject("Failed to fetch records: " + e.target.error);
+    });
+  }
+
+  async deleteRecord(id) {
+    return new Promise((resolve, reject) => {
+      const transaction = this.db.transaction([this.storeName], "readwrite");
+      const store = transaction.objectStore(this.storeName);
+      const request = store.delete(id);
+
+      request.onsuccess = () => resolve(true);
+      request.onerror = (e) => reject("Delete operation failed: " + e.target.error);
+    });
+  }
+}
+
+window.coreVault = new CoreDataVault();
+
+/* --------------------------------------------------------------------------
+   1. Global UI & Vault Event Handlers
+   -------------------------------------------------------------------------- */
 async function unlockCoreVault() {
   const pass = document.getElementById("vaultPassphrase").value.trim();
   if (!pass) return alert("Please enter a passphrase.");
@@ -49,10 +135,12 @@ async function unlockCoreVault() {
   await window.coreVault.deriveVaultKey(pass);
   
   const badge = document.getElementById("vault-status-badge");
-  badge.textContent = "🔓 UNLOCKED";
-  badge.style.background = "rgba(46,160,79,0.15)";
-  badge.style.color = "#3fb950";
-  badge.style.borderColor = "rgba(63,185,80,0.3)";
+  if (badge) {
+    badge.textContent = "🔓 UNLOCKED";
+    badge.style.background = "rgba(46,160,79,0.15)";
+    badge.style.color = "#3fb950";
+    badge.style.borderColor = "rgba(63,185,80,0.3)";
+  }
 
   renderVaultUI();
 }
@@ -67,7 +155,7 @@ async function saveToCoreVault() {
     input.value = "";
     renderVaultUI();
   } catch (err) {
-    alert("Save Error: Ensure vault is unlocked first!");
+    alert("Save Error: Unlock vault master passphrase first!");
   }
 }
 
@@ -95,12 +183,12 @@ async function renderVaultUI() {
     }
 
     html += `
-      <div style="display: flex; justify-content: space-between; align-items: flex-start; padding: 10px; background: rgba(255,255,255,0.02); border: 1px solid #30363d; border-radius: 6px;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; padding: 10px; background: rgba(255,255,255,0.02); border: 1px solid #30363d; border-radius: 6px; margin-bottom: 6px;">
         <div style="flex: 1; padding-right: 8px;">
           <div style="font-size: 0.85rem; color: #c9d1d9; word-break: break-all;">${decryptedText}</div>
-          <div style="color: #8b949e; font-size: 0.7rem; margin-top: 6px;">${doc.timestamp} | ID: ${doc.id}</div>
+          <div style="color: #8b949e; font-size: 0.7rem; margin-top: 6px;">${new Date(doc.timestamp).toLocaleString()} | ID: ${doc.id}</div>
         </div>
-        <button onclick="deleteVaultRecord('${doc.id}')" style="background: none; border: none; color: #f85149; font-size: 0.9rem; cursor: pointer;">🗑️</button>
+        <button onclick="deleteVaultRecord('${doc.id}')" style="background: none; border: none; color: #f85149; font-size: 0.9rem; cursor: pointer;" title="Delete Record">🗑️</button>
       </div>
     `;
   }
@@ -113,40 +201,52 @@ async function deleteVaultRecord(id) {
   renderVaultUI();
 }
 
-  display.innerHTML = entries.map(e => `
-    <div class="entry-item" style="display: flex; justify-content: space-between; align-items: flex-start; padding: 10px; background: rgba(255,255,255,0.02); border: 1px solid #30363d; border-radius: 6px;">
-      <div style="flex: 1; padding-right: 8px;">
-        <div style="font-size: 0.9rem; color: #c9d1d9; white-space: pre-wrap; word-break: break-word;">${e.text}</div>
-        <div style="color: #8b949e; font-size: 0.7rem; margin-top: 6px;">${e.timestamp}</div>
-      </div>
-      <button onclick="deleteVaultEntry(${e.id})" style="background: none; border: none; color: #f85149; font-size: 0.9rem; cursor: pointer; padding: 0 4px;" title="Delete Entry">🗑️</button>
-    </div>
-  `).join('');
-}
-
-function deleteVaultEntry(id) {
-  let entries = JSON.parse(localStorage.getItem("kreer_vault") || "[]");
-  entries = entries.filter(e => e.id !== id);
-  localStorage.setItem("kreer_vault", JSON.stringify(entries));
-  loadVault();
-}
-
-function copyAllVaultEntries() {
-  let entries = JSON.parse(localStorage.getItem("kreer_vault") || "[]");
-  if (entries.length === 0) {
+async function copyAllVaultEntries() {
+  const records = await window.coreVault.getAllRecords();
+  if (records.length === 0) {
     alert("Vault is currently empty.");
     return;
   }
 
-  const formattedText = entries.map(e => `[${e.timestamp}]\n${e.text}`).join('\n\n---\n\n');
-  
+  let formattedText = "";
+  for (const doc of records) {
+    let content = "🔒 [Encrypted Ciphertext Blob]";
+    if (window.coreVault.vaultKey) {
+      try {
+        content = await window.coreVault.decryptRecord(doc);
+      } catch (err) {
+        content = "[Decryption Error]";
+      }
+    }
+    formattedText += `[${doc.timestamp}]\n${content}\n\n---\n\n`;
+  }
+
   navigator.clipboard.writeText(formattedText).then(() => {
-    alert("All vault entries copied to clipboard!");
+    alert("Vault entries copied to clipboard!");
   }).catch(err => {
     console.error("Clipboard copy failed:", err);
   });
 }
-/* 1. Live System Clock */
+/* --------------------------------------------------------------------------
+   2. DOM Initialization Engine
+   -------------------------------------------------------------------------- */
+document.addEventListener("DOMContentLoaded", async () => {
+  initLiveClock();
+  initTagFilter();
+  initScrollSpy();
+  initProjectModals();
+  initGitHubTelemetry();
+  initCommandTerminal();
+
+  if (window.coreVault) {
+    await window.coreVault.initDB();
+    renderVaultUI();
+  }
+});
+
+/* --------------------------------------------------------------------------
+   3. Live System Clock
+   -------------------------------------------------------------------------- */
 function initLiveClock() {
   const clockElement = document.getElementById("live-clock");
   if (!clockElement) return;
@@ -161,7 +261,9 @@ function initLiveClock() {
   setInterval(updateTime, 1000);
 }
 
-/* 2. Interactive Tag Filtering */
+/* --------------------------------------------------------------------------
+   4. Interactive Tag Filtering
+   -------------------------------------------------------------------------- */
 function initTagFilter() {
   const tags = document.querySelectorAll(".tag");
   const cards = document.querySelectorAll(".card");
@@ -188,18 +290,20 @@ function initTagFilter() {
 
       tags.forEach((t) => {
         if (activeTag && t.textContent.trim().toLowerCase() === activeTag) {
-          t.style.backgroundColor = "var(--accent-color)";
-          t.style.color = "var(--bg-primary)";
+          t.style.backgroundColor = "var(--accent-color, #58a6ff)";
+          t.style.color = "var(--bg-primary, #0d1117)";
         } else {
-          t.style.backgroundColor = "var(--bg-hover)";
-          t.style.color = "var(--accent-color)";
+          t.style.backgroundColor = "var(--bg-hover, #21262d)";
+          t.style.color = "var(--accent-color, #58a6ff)";
         }
       });
     });
   });
 }
 
-/* 3. ScrollSpy Navigation */
+/* --------------------------------------------------------------------------
+   5. ScrollSpy Navigation
+   -------------------------------------------------------------------------- */
 function initScrollSpy() {
   const sections = document.querySelectorAll("section");
   const navLinks = document.querySelectorAll("nav a");
@@ -222,7 +326,9 @@ function initScrollSpy() {
   });
 }
 
-/* 4. Interactive Project Modals */
+/* --------------------------------------------------------------------------
+   6. Interactive Project Modals
+   -------------------------------------------------------------------------- */
 const projectDetails = {
   "Algorithmic Trading Agent": {
     architecture: "Event-driven architecture connecting local DeepSeek reasoning engine to Alpaca REST/WebSocket endpoints.",
@@ -296,7 +402,9 @@ function initProjectModals() {
   });
 }
 
-/* 5. Live GitHub Telemetry Fetcher */
+/* --------------------------------------------------------------------------
+   7. Live GitHub Telemetry Fetcher
+   -------------------------------------------------------------------------- */
 async function initGitHubTelemetry() {
   const container = document.getElementById("telemetry-feed");
   if (!container) return;
@@ -361,7 +469,9 @@ async function initGitHubTelemetry() {
   }
 }
 
-/* 6. Smart AI Chatbot, Mobile Voice Engine & Intent Handler */
+/* --------------------------------------------------------------------------
+   8. Command Terminal & Voice Engine
+   -------------------------------------------------------------------------- */
 function initCommandTerminal() {
   const triggerBtn = document.getElementById("cli-trigger");
   const drawer = document.getElementById("cli-drawer");
@@ -373,7 +483,6 @@ function initCommandTerminal() {
 
   if (!triggerBtn || !drawer || !closeBtn || !form || !input || !output) return;
 
-  // Fix 1: Unified Drawer Toggle Handling (ARIA + CSS Class)
   const openDrawer = (e) => {
     if (e) e.preventDefault();
     drawer.setAttribute("aria-hidden", "false");
@@ -389,7 +498,6 @@ function initCommandTerminal() {
   triggerBtn.addEventListener("click", openDrawer);
   closeBtn.addEventListener("click", closeDrawer);
 
-  // Fix 2: Robust Speech Recognition Engine (Voice-to-Text)
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (SpeechRecognition) {
     let micBtn = document.getElementById("cli-mic-btn");
@@ -418,7 +526,7 @@ function initCommandTerminal() {
           micBtn.innerHTML = "🔴";
           isListening = true;
         } catch (err) {
-          console.warn("Speech recognition active or blocked:", err);
+          console.warn("Speech recognition error:", err);
         }
       } else {
         recognition.stop();
@@ -428,14 +536,12 @@ function initCommandTerminal() {
     });
 
     recognition.onresult = (event) => {
-      const transcript = event.results[0][0].transcript;
-      input.value = transcript;
+      input.value = event.results[0][0].transcript;
       micBtn.innerHTML = "🎙️";
       isListening = false;
     };
 
-    recognition.onerror = (err) => {
-      console.warn("Speech recognition error:", err);
+    recognition.onerror = () => {
       micBtn.innerHTML = "🎙️";
       isListening = false;
     };
@@ -446,19 +552,16 @@ function initCommandTerminal() {
     };
   }
 
-  // Smart Intent Responses
   const getBotResponse = (query) => {
     const q = query.toLowerCase();
 
-        // System Commands
     if (q === "help") {
       return "Commands: <strong>status</strong>, <strong>theme</strong>, <strong>goto [section]</strong>, <strong>clear</strong>. Or ask about my <strong>skills</strong>, <strong>code</strong>, <strong>marketing</strong>, or <strong>projects</strong>!";
     }
     if (q === "status") {
       return "SYSTEM STATUS: All systems operational | Telemetry: Live via GitHub API";
     }
-    
-     // Dynamic Theme Toggle (Guaranteed Visual Override)
+
     if (q.includes("theme")) {
       let styleTag = document.getElementById("theme-override");
       if (!styleTag) {
@@ -488,7 +591,6 @@ function initCommandTerminal() {
         styleTag.textContent = "";
         return "🎨 Theme restored: **Slate Dark Default**";
       }
-
     }
 
     if (q.startsWith("goto ")) {
@@ -499,35 +601,32 @@ function initCommandTerminal() {
         closeDrawer();
         return `Navigated to #${target}`;
       }
-      return `Section #${target} not found. Try: about, experience, projects, telemetry, contact`;
+      return `Section #${target} not found. Try: about, experience, projects, telemetry, contact, vault-section`;
     }
+
     if (q === "clear") {
       output.innerHTML = "";
       return null;
     }
 
-    if (q.includes("code") || q.includes("program") || q.includes("app") || q.includes("build") || q.includes("develop") || q.includes("create")) {
-      return "Yes! I write modern code for web applications, automated CI/CD deployment pipelines, and responsive platforms using JavaScript, Python, and robust system architectures.";
+    if (q.includes("code") || q.includes("build") || q.includes("develop")) {
+      return "I write modern code for web platforms, automated deployment pipelines, and responsive systems using JavaScript, Python, and robust web standards.";
     }
 
-    if (q.includes("who") || q.includes("about") || q.includes("old") || q.includes("age") || q.includes("okennachukwu") || q.includes("intro")) {
+    if (q.includes("who") || q.includes("about") || q.includes("intro")) {
       return "I'm Okennachukwu—a technology specialist focused on scalable web architecture, systems engineering, data testing, and performance growth analytics.";
     }
 
-    if (q.includes("olist") || q.includes("marketing") || q.includes("e-commerce") || q.includes("ecommerce") || q.includes("amazon") || q.includes("yahands")) {
+    if (q.includes("olist") || q.includes("marketing") || q.includes("e-commerce")) {
       return "E-Commerce & Marketing background:<br>• <strong>Marketing Team Lead @ Olist</strong> (2019–2021): Directed growth strategy, analytics, and business systems testing.<br>• <strong>Yahands Infrastructure</strong>: Amazon Seller Central integrations, automated product listings, and web systems.";
     }
 
-    if (q.includes("skill") || q.includes("stack") || q.includes("python") || q.includes("js") || q.includes("javascript")) {
+    if (q.includes("skill") || q.includes("stack") || q.includes("python") || q.includes("js")) {
       return "Core Stack:<br>• <strong>Languages & Web</strong>: JavaScript (ES6+), Python, HTML5, CSS3<br>• <strong>AI & Automation</strong>: DeepSeek Models, Alpaca API, Multi-Agent Workflows<br>• <strong>Operations</strong>: Systems Testing & Data Accuracy Verification";
     }
 
-    if (q.includes("project") || q.includes("agent") || q.includes("trading") || q.includes("ai") || q.includes("deepseek")) {
+    if (q.includes("project") || q.includes("agent") || q.includes("trading") || q.includes("ai")) {
       return "Key Technical Projects:<br>1. <strong>Algorithmic Trading Agent</strong> (DeepSeek + Alpaca REST/WebSocket API)<br>2. <strong>Multi-Agent Workflow Engine</strong><br>3. <strong>Yahands E-Commerce & Web Infrastructure</strong><br>Tap any project card on the page to view detailed system specs!";
-    }
-
-    if (q.includes("contact") || q.includes("email") || q.includes("hire") || q.includes("reach") || q.includes("message")) {
-      return "You can connect directly using the <strong>Direct Message</strong> button in the Signal & Contact section, or via GitHub!";
     }
 
     return `I'm programmed to assist with inquiries about my <strong>coding experience</strong>, <strong>AI projects</strong>, <strong>marketing leadership at Olist</strong>, or <strong>skills</strong>. Type <strong>help</strong> for system commands!`;
@@ -565,150 +664,4 @@ function initCommandTerminal() {
       if (cmd) processQuery(cmd);
     });
   });
-/* ==========================================================================
-   Project-Kreer: Core Data Vault Module (W3C EDV Compliant)
-   ========================================================================== */
-
-class CoreDataVault {
-  constructor() {
-    this.dbName = "kreer_core_vault_db";
-    this.storeName = "encrypted_records";
-    this.db = null;
-    this.vaultKey = null;
-  }
-
-  /**
-   * Initialize IndexedDB database
-   */
-  async initDB() {
-    return new Promise((resolve, reject) => {
-      const request = indexedDB.open(this.dbName, 1);
-      request.onupgradeneeded = (e) => {
-        const db = e.target.result;
-        if (!db.objectStoreNames.contains(this.storeName)) {
-          db.createObjectStore(this.storeName, { keyPath: "id" });
-        }
-      };
-      request.onsuccess = (e) => {
-        this.db = e.target.result;
-        resolve(this.db);
-      };
-      request.onerror = (e) => reject("DB Initialization Error: " + e.target.error);
-    });
-  }
-
-  /**
-   * Derive an AES-GCM 256-bit encryption key using PBKDF2
-   */
-  async deriveVaultKey(secretPassphrase, saltString = "kreer_vault_salt") {
-    const enc = new TextEncoder();
-    const keyMaterial = await crypto.subtle.importKey(
-      "raw",
-      enc.encode(secretPassphrase),
-      "PBKDF2",
-      false,
-      ["deriveKey"]
-    );
-
-    this.vaultKey = await crypto.subtle.deriveKey(
-      {
-        name: "PBKDF2",
-        salt: enc.encode(saltString),
-        iterations: 100000,
-        hash: "SHA-256"
-      },
-      keyMaterial,
-      { name: "AES-GCM", length: 256 },
-      false,
-      ["encrypt", "decrypt"]
-    );
-
-    return this.vaultKey;
-  }
-
-  /**
-   * Encrypt raw payload into W3C EDV Document structure
-   */
-  async storeEncryptedRecord(payloadText) {
-    if (!this.vaultKey) throw new Error("Vault unlocked key missing!");
-
-    const enc = new TextEncoder();
-    const iv = crypto.getRandomValues(new Uint8Array(12)); // 96-bit AES-GCM IV
-
-    const ciphertextBuffer = await crypto.subtle.encrypt(
-      { name: "AES-GCM", iv: iv },
-      this.vaultKey,
-      enc.encode(payloadText)
-    );
-
-    // Formulate W3C EDV Document Envelope
-    const edvDocument = {
-      id: "edv_" + Date.now() + "_" + Math.random().toString(36).substr(2, 5),
-      timestamp: new Date().toISOString(),
-      iv: Array.from(iv),
-      ciphertext: Array.from(new Uint8Array(ciphertextBuffer))
-    };
-
-    // Store in IndexedDB
-    return new Promise((resolve, reject) => {
-      const transaction = this.db.transaction([this.storeName], "readwrite");
-      const store = transaction.objectStore(this.storeName);
-      const request = store.add(edvDocument);
-
-      request.onsuccess = () => resolve(edvDocument);
-      request.onerror = (e) => reject("Failed to save encrypted record: " + e.target.error);
-    });
-  }
-
-  /**
-   * Decrypt record back to plain text
-   */
-  async decryptRecord(edvDocument) {
-    if (!this.vaultKey) throw new Error("Vault unlocked key missing!");
-
-    const iv = new Uint8Array(edvDocument.iv);
-    const ciphertext = new Uint8Array(edvDocument.ciphertext);
-
-    const decryptedBuffer = await crypto.subtle.decrypt(
-      { name: "AES-GCM", iv: iv },
-      this.vaultKey,
-      ciphertext
-    );
-
-    return new TextDecoder().decode(decryptedBuffer);
-  }
-
-  /**
-   * Retrieve all raw encrypted EDV documents
-   */
-  async getAllRecords() {
-    return new Promise((resolve, reject) => {
-      const transaction = this.db.transaction([this.storeName], "readonly");
-      const store = transaction.objectStore(this.storeName);
-      const request = store.getAll();
-
-      request.onsuccess = () => resolve(request.result);
-      request.onerror = (e) => reject("Failed to fetch records: " + e.target.error);
-    });
-  }
-
-  /**
-   * Delete an encrypted record by ID
-   */
-  async deleteRecord(id) {
-    return new Promise((resolve, reject) => {
-      const transaction = this.db.transaction([this.storeName], "readwrite");
-      const store = transaction.objectStore(this.storeName);
-      const request = store.delete(id);
-
-      request.onsuccess = () => resolve(true);
-      request.onerror = (e) => reject("Delete operation failed: " + e.target.error);
-    });
-  }
 }
-
-// Global Core Vault Singleton Instance
-window.coreVault = new CoreDataVault();
-
-}
-
