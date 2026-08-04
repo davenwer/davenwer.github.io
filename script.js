@@ -181,5 +181,67 @@ function initProjectModals() {
 document.addEventListener("DOMContentLoaded", () => {
   initProjectModals();
 });
+/**
+ * 5. Live GitHub Telemetry Fetcher
+ */
+async function initGitHubTelemetry() {
+  const container = document.getElementById("telemetry-feed");
+  if (!container) return;
+
+  const username = "davenwer";
+  const apiEndpoint = `https://api.github.com/users/${username}/repos?sort=updated&per_page=4`;
+
+  try {
+    const response = await fetch(apiEndpoint);
+    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
+    const repos = await response.json();
+
+    if (!repos || repos.length === 0) {
+      container.innerHTML = `<p class="text-muted">No public telemetry feeds available.</p>`;
+      return;
+    }
+
+    // Render dynamically fetched repo cards
+    container.innerHTML = repos.map((repo) => `
+      <article class="card telemetry-card">
+        <div>
+          <div class="repo-header">
+            <a href="${repo.html_url}" target="_blank" rel="noopener" class="repo-title">
+              ⚡ ${repo.name}
+            </a>
+          </div>
+          <p>${repo.description || "Active public repository stream."}</p>
+        </div>
+
+        <div class="repo-meta">
+          ${repo.language ? `
+            <span class="lang-badge">
+              <span class="lang-dot"></span>
+              ${repo.language}
+            </span>
+          ` : ""}
+          <span>⭐ ${repo.stargazers_count}</span>
+          <span>Updated: ${new Date(repo.updated_at).toLocaleDateString()}</span>
+        </div>
+      </article>
+    `).join("");
+
+  } catch (error) {
+    console.warn("GitHub API Limit or Offline state:", error);
+    // Graceful fallback display
+    container.innerHTML = `
+      <article class="card telemetry-card">
+        <p><strong>System Status: Offline / Rate Limited</strong></p>
+        <p>Live telemetry telemetry sync paused. All static modules remain functional.</p>
+      </article>
+    `;
+  }
+}
+
+// Call on DOM Load
+document.addEventListener("DOMContentLoaded", () => {
+  initGitHubTelemetry();
+});
 
 }
