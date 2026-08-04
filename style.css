@@ -210,5 +210,26 @@ nav a.active {
   user-select: none;
   transition: var(--transition);
 }
+/* ==========================================================================
+   Mobile Viewport & Safe Area Adjustments
+   ========================================================================== */
+
+/* 1. Prevent top notch collision using safe area insets */
+header {
+  padding-top: max(1.5rem, env(safe-area-inset-top, 20px));
+}
+
+/* 2. Add extra padding at the bottom so content isn't covered by the mobile URL bar */
+main {
+  padding-bottom: 5rem;
+}
+
+/* 3. Stack card title and date vertically on small screens */
+@media (max-width: 480px) {
+  .card-header {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+}
 
 }
