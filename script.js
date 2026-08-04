@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Project-Kreer Master Script Engine
+   Project-Kreer Master Script Engine (With Smart Chatbot Intent Matcher)
    ========================================================================== */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -226,7 +226,7 @@ async function initGitHubTelemetry() {
   }
 }
 
-/* 6. Hybrid AI Chatbot & Command Terminal Handler */
+/* 6. Smart AI Chatbot & Intent Engine Handler */
 function initCommandTerminal() {
   const triggerBtn = document.getElementById("cli-trigger");
   const drawer = document.getElementById("cli-drawer");
@@ -238,7 +238,6 @@ function initCommandTerminal() {
 
   if (!triggerBtn || !drawer || !closeBtn || !form || !input || !output) return;
 
-  // Touch and Click Event Handlers for Mobile Safari
   const openDrawer = (e) => {
     if (e) e.preventDefault();
     drawer.classList.add("active");
@@ -252,14 +251,16 @@ function initCommandTerminal() {
   triggerBtn.addEventListener("click", openDrawer);
   closeBtn.addEventListener("click", closeDrawer);
 
+  // Expanded Intent Matcher Engine
   const getBotResponse = (query) => {
     const q = query.toLowerCase();
 
+    // 1. System CLI Commands
     if (q === "help") {
-      return "Commands: <strong>status</strong>, <strong>theme</strong>, <strong>goto [section]</strong>, <strong>clear</strong>. Or ask about <strong>skills</strong>, <strong>experience</strong>, or <strong>projects</strong>!";
+      return "System Commands: <strong>status</strong>, <strong>theme</strong>, <strong>goto [section]</strong>, <strong>clear</strong>. Or ask about my <strong>skills</strong>, <strong>web apps</strong>, <strong>marketing</strong>, or <strong>projects</strong>!";
     }
     if (q === "status") {
-      return "SYSTEM STATUS: All services operational | Live GitHub Telemetry: Active | Build: GitHub Actions CI/CD";
+      return "SYSTEM STATUS: All services operational | PWA: Enabled | Telemetry: Live via GitHub API";
     }
     if (q === "theme") {
       document.body.classList.toggle("green-theme");
@@ -280,23 +281,37 @@ function initCommandTerminal() {
       return null;
     }
 
-    if (q.includes("who") || q.includes("about") || q.includes("intro")) {
-      return "I'm Okennachukwu—a specialist in scalable systems engineering, performance marketing analytics, data workflows, and modern web solutions.";
-    }
-    if (q.includes("skill") || q.includes("stack") || q.includes("tech")) {
-      return "Core Stack: JavaScript (ES6+), Python, GitHub Actions CI/CD, Data Analytics, Systems Testing, E-Commerce Infrastructure, and Multi-Agent AI workflows.";
-    }
-    if (q.includes("experience") || q.includes("work") || q.includes("olist")) {
-      return "Experience highlights:<br>• <strong>E-Commerce Operations &amp; Strategy</strong> (2021–Present): Storefront architecture, listing automation, catalog management.<br>• <strong>Marketing &amp; Systems Lead @ Olist</strong> (2019–2021): Led growth initiatives, data accuracy workflows, and system testing.";
-    }
-    if (q.includes("project") || q.includes("agent") || q.includes("trading") || q.includes("yahands")) {
-      return "Key Projects:<br>1. <strong>Algorithmic Trading Agent</strong> (DeepSeek + Alpaca API)<br>2. <strong>Multi-Agent Workflow Engine</strong><br>3. <strong>Yahands E-Commerce &amp; Web Infrastructure</strong><br>Tap any card in the Projects section for technical architecture deep-dives!";
-    }
-    if (q.includes("contact") || q.includes("email") || q.includes("reach") || q.includes("hire")) {
-      return "You can connect directly via the <strong>Signal &amp; Contact</strong> section or email via the direct message button at the bottom of the page!";
+    // 2. Web / Native App / Development Capability Queries
+    if (q.includes("app") || q.includes("native") || q.includes("web") || q.includes("build") || q.includes("create") || q.includes("develop")) {
+      return "Yes! I architect modern web applications, progressive web apps (PWAs), automated CI/CD deployment pipelines, and responsive mobile-first platforms using JavaScript, Python, and cloud infrastructure.";
     }
 
-    return `I'm not sure about "${query}" yet. Try asking about <strong>skills</strong>, <strong>experience</strong>, <strong>projects</strong>, or type <strong>help</strong> for system commands!`;
+    // 3. Background & Bio Queries
+    if (q.includes("who") || q.includes("about") || q.includes("old") || q.includes("age") || q.includes("okennachukwu") || q.includes("intro")) {
+      return "I'm Okennachukwu—a technology specialist with expertise across web architecture, systems engineering, data accuracy testing, and performance growth analytics.";
+    }
+
+    // 4. Marketing & E-Commerce Work
+    if (q.includes("olist") || q.includes("marketing") || q.includes("e-commerce") || q.includes("ecommerce") || q.includes("amazon") || q.includes("yahands")) {
+      return "E-Commerce & Marketing background:<br>• <strong>Marketing Team Lead @ Olist</strong> (2019–2021): Directed growth strategy, analytics, and business systems testing.<br>• <strong>Yahands Infrastructure</strong>: Amazon Seller Central integrations, catalog automation, and brand web development.";
+    }
+
+    // 5. Tech Stack & Skills
+    if (q.includes("skill") || q.includes("stack") || q.includes("python") || q.includes("js") || q.includes("javascript")) {
+      return "Core Stack:<br>• <strong>Frontend/PWA</strong>: HTML5, CSS3, ES6+ JavaScript<br>• <strong>Automation/Backend</strong>: Python, GitHub Actions CI/CD<br>• <strong>AI/ML Integration</strong>: DeepSeek Models, Alpaca API, Multi-Agent Workflows<br>• <strong>Operations</strong>: Systems Testing & Data Accuracy Verification";
+    }
+
+    // 6. AI & Trading Projects
+    if (q.includes("project") || q.includes("agent") || q.includes("trading") || q.includes("ai") || q.includes("deepseek")) {
+      return "Key Technical Projects:<br>1. <strong>Algorithmic Trading Agent</strong> (DeepSeek + Alpaca REST/WebSocket API)<br>2. <strong>Multi-Agent Workflow Engine</strong><br>3. <strong>Yahands Storefront & Web Systems</strong><br>Tap any project card on the page to view detailed system specs!";
+    }
+
+    // 7. Contact / Reach Out
+    if (q.includes("contact") || q.includes("email") || q.includes("hire") || q.includes("reach") || q.includes("message")) {
+      return "You can message me directly using the <strong>Direct Message</strong> button in the Signal & Contact section, or visit my GitHub profile!";
+    }
+
+    return `I'm programmed to assist with inquiries about my <strong>web app development</strong>, <strong>AI projects</strong>, <strong>marketing experience at Olist</strong>, or <strong>skills</strong>. Type <strong>help</strong> for system commands!`;
   };
 
   const processQuery = (userQuery) => {
