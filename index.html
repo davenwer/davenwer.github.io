@@ -295,26 +295,35 @@
         <h1>PROJECT-KREER</h1>
         <div class="status-badge">● SYSTEM ONLINE (YEAR 1)</div>
         <p style="margin-top: 10px;">Building scalable systems, data workflows, and modern web solutions.</p>
-      </section>
+      
+    <!-- Local Storage Vault Module (Enhanced) -->
+<section id="vault-section">
+  <!-- Input Container -->
+  <div class="card">
+    <h3>Vault Module 0.1 (Local Memory)</h3>
+    <p>Cryptographic Identity & Local Data Storage initialized.</p>
+    
+    <div style="position: relative; margin-bottom: 10px;">
+      <textarea id="vaultInput" placeholder="Use voice-to-text or type notes..." style="width: 100%; box-sizing: border-box; min-height: 80px; padding: 10px; border-radius: 6px; border: 1px solid var(--border-color, #30363d); background: var(--bg-primary, #0d1117); color: #c9d1d9; resize: vertical;"></textarea>
+    </div>
 
-      <!-- Local Storage Vault Module (Option A Integration) -->
-      <section id="vault-section">
-        <div class="card">
-          <h3>Vault Module 0.1 (Local Memory)</h3>
-          <p>Cryptographic Identity & Local Data Storage initialized securely in browser memory.</p>
-          <textarea id="vaultInput" placeholder="Use voice-to-text or type private notes here..."></textarea>
-          <button class="vault-btn" onclick="saveToVault()">Store in Phone Memory</button>
-        </div>
+    <button class="vault-btn" onclick="saveToVault()" style="width: 100%; padding: 10px; border-radius: 6px; background: var(--accent-color, #58a6ff); color: #0d1117; font-weight: bold; border: none; cursor: pointer;">Store Entry</button>
+  </div>
 
-        <div class="card">
-          <h3>Encrypted Local Entries</h3>
-          <div id="vaultDisplay" class="entry-list">
-            <div style="color: #8b949e; font-size: 0.85rem;">No local entries found.</div>
-          </div>
-        </div>
-      </section>
+  <!-- Display Container -->
+  <div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+      <h3 style="margin: 0;">Encrypted Local Entries</h3>
+      <button onclick="copyAllVaultEntries()" style="background: transparent; border: 1px solid #30363d; color: var(--accent-color, #58a6ff); font-size: 0.8rem; padding: 4px 10px; border-radius: 4px; cursor: pointer;">📋 Copy All</button>
+    </div>
 
-      <!-- Experience Section -->
+    <div id="vaultDisplay" class="entry-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 280px; overflow-y: auto;">
+      <div style="color: #8b949e; font-size: 0.85rem;">No local entries found.</div>
+    </div>
+  </div>
+</section>
+        
+     <!-- Experience Section -->
       <section id="experience">
         <h2>Experience</h2>
         <div class="grid">
