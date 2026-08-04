@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 // Signal Lost</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      background-color: var(--bg-primary, #0a0f1d);
+      color: var(--text-primary, #e2e8f0);
+      font-family: monospace, system-ui, sans-serif;
+      text-align: center;
+      padding: 1.5rem;
+    }
+    .error-container {
+      max-width: 480px;
+      padding: 2.5rem;
+      background: var(--bg-card, #111827);
+      border: 1px solid var(--border-color, #1f293d);
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+    .error-code {
+      font-size: 4rem;
+      font-weight: 800;
+      color: var(--accent-color, #38bdf8);
+      margin: 0 0 0.5rem 0;
+      letter-spacing: -2px;
+    }
+    .error-title {
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+      color: #94a3b8;
+    }
+    .btn-home {
+      display: inline-block;
+      margin-top: 1.5rem;
+      padding: 0.75rem 1.5rem;
+      background: var(--accent-color, #38bdf8);
+      color: #0a0f1d;
+      font-weight: 700;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+    .btn-home:active {
+      transform: scale(0.98);
+    }
+  </style>
+</head>
+<body>
+  <div class="error-container">
+    <div class="error-code">404</div>
+    <div class="error-title">SYSTEM ERROR // SIGNAL LOST</div>
+    <p style="color: #64748b; font-size: 0.9rem;">The requested endpoint or resource could not be resolved on the server network.</p>
+    <a href="/" class="btn-home">Return to System Hub</a>
+  </div>
+</body>
+</html>
