@@ -231,5 +231,93 @@ main {
     gap: 0.25rem;
   }
 }
+/* ==========================================================================
+   Project Detail Modal Overlay (Mobile-First)
+   ========================================================================== */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  padding: 1.25rem;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  width: 100%;
+  max-width: 550px;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: 2rem 1.5rem;
+  position: relative;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.6);
+  transform: translateY(20px);
+  transition: transform 0.3s ease;
+}
+
+.modal-overlay.active .modal-card {
+  transform: translateY(0);
+}
+
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1.25rem;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 2rem;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.modal-close:hover {
+  color: var(--accent-color);
+}
+
+.project-card {
+  cursor: pointer;
+}
+
+.modal-body h3 {
+  color: var(--accent-color);
+  font-size: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.modal-body h4 {
+  color: var(--text-main);
+  font-size: 1rem;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.modal-body ul {
+  padding-left: 1.25rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.modal-body ul li {
+  margin-bottom: 0.4rem;
+}
 
 }
