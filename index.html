@@ -233,6 +233,35 @@
       </div>
     </div>
   </div>
-  
+   <!-- Floating AI Chatbot & Command Terminal -->
+  <button id="cli-trigger" class="cli-floating-btn" aria-label="Open AI Assistant">
+    🤖 Assistant
+  </button>
+
+  <div id="cli-drawer" class="cli-drawer" aria-hidden="true">
+    <div class="cli-header">
+      <span>KREER // PORTFOLIO AI &amp; TERMINAL v2.0</span>
+      <button id="cli-close" class="cli-close-btn">&times;</button>
+    </div>
+    
+    <div id="cli-output" class="cli-output">
+      <p class="bot-msg">👋 Hi! I'm the Kreer Portfolio Assistant. Ask me anything about my background, skills, or projects—or tap a quick command below!</p>
+    </div>
+
+    <div class="cli-quick-commands">
+      <button class="cli-pill" data-cmd="who are you">who are you</button>
+      <button class="cli-pill" data-cmd="skills">skills</button>
+      <button class="cli-pill" data-cmd="experience">experience</button>
+      <button class="cli-pill" data-cmd="theme">theme</button>
+      <button class="cli-pill" data-cmd="goto projects">goto projects</button>
+      <button class="cli-pill" data-cmd="clear">clear</button>
+    </div>
+
+    <form id="cli-form" class="cli-input-form">
+      <span class="cli-prompt">&gt;</span>
+      <input type="text" id="cli-input" placeholder="Ask a question or type a command..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+    </form>
+  </div>
+
 </body>
 </html>
