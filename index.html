@@ -458,30 +458,7 @@
       }
     });
 
-    function saveToVault() {
-      const input = document.getElementById("vaultInput");
-      const text = input.value.trim();
-      if (!text) return;
-
-      let entries = JSON.parse(localStorage.getItem("kreer_vault") || "[]");
-      entries.unshift({ text: text, timestamp: new Date().toLocaleString() });
-      
-      localStorage.setItem("kreer_vault", JSON.stringify(entries));
-      input.value = "";
-      loadVault();
-    }
-
-    function loadVault() {
-      const display = document.getElementById("vaultDisplay");
-      if (!display) return;
-      let entries = JSON.parse(localStorage.getItem("kreer_vault") || "[]");
-
-      if (entries.length === 0) {
-        display.innerHTML = '<div style="color: #8b949e; font-size: 0.85rem;">No local entries found.</div>';
-        return;
-      }
-
-      display.innerHTML = entries.map(e => `
+         display.innerHTML = entries.map(e => `
         <div class="entry-item">
           <div>${e.text}</div>
           <div style="color: #8b949e; font-size: 0.7rem; margin-top: 4px;">${e.timestamp}</div>
