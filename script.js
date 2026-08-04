@@ -9,8 +9,66 @@ document.addEventListener("DOMContentLoaded", () => {
   initProjectModals();
   initGitHubTelemetry();
   initCommandTerminal();
+  loadVault();
 });
 
+function saveToVault() {
+  const input = document.getElementById("vaultInput");
+  if (!input) return;
+  const text = input.value.trim();
+  if (!text) return;
+
+  let entries = JSON.parse(localStorage.getItem("kreer_vault") || "[]");
+  entries.unshift({ id: Date.now(), text: text, timestamp: new Date().toLocaleString() });
+  
+  localStorage.setItem("kreer_vault", JSON.stringify(entries));
+  input.value = "";
+  loadVault();
+}
+
+function loadVault() {
+  const display = document.getElementById("vaultDisplay");
+  if (!display) return;
+  let entries = JSON.parse(localStorage.getItem("kreer_vault") || "[]");
+
+  if (entries.length === 0) {
+    display.innerHTML = '<div style="color: #8b949e; font-size: 0.85rem; padding: 8px 0;">No local entries found.</div>';
+    return;
+  }
+
+  display.innerHTML = entries.map(e => `
+    <div class="entry-item" style="display: flex; justify-content: space-between; align-items: flex-start; padding: 10px; background: rgba(255,255,255,0.02); border: 1px solid #30363d; border-radius: 6px;">
+      <div style="flex: 1; padding-right: 8px;">
+        <div style="font-size: 0.9rem; color: #c9d1d9; white-space: pre-wrap; word-break: break-word;">${e.text}</div>
+        <div style="color: #8b949e; font-size: 0.7rem; margin-top: 6px;">${e.timestamp}</div>
+      </div>
+      <button onclick="deleteVaultEntry(${e.id})" style="background: none; border: none; color: #f85149; font-size: 0.9rem; cursor: pointer; padding: 0 4px;" title="Delete Entry">🗑️</button>
+    </div>
+  `).join('');
+}
+
+function deleteVaultEntry(id) {
+  let entries = JSON.parse(localStorage.getItem("kreer_vault") || "[]");
+  entries = entries.filter(e => e.id !== id);
+  localStorage.setItem("kreer_vault", JSON.stringify(entries));
+  loadVault();
+}
+
+function copyAllVaultEntries() {
+  let entries = JSON.parse(localStorage.getItem("kreer_vault") || "[]");
+  if (entries.length === 0) {
+    alert("Vault is currently empty.");
+    return;
+  }
+
+  const formattedText = entries.map(e => `[${e.timestamp}]\n${e.text}`).join('\n\n---\n\n');
+  
+  navigator.clipboard.writeText(formattedText).then(() => {
+    alert("All vault entries copied to clipboard!");
+  }).catch(err => {
+    console.error("Clipboard copy failed:", err);
+  });
+}
 /* 1. Live System Clock */
 function initLiveClock() {
   const clockElement = document.getElementById("live-clock");
