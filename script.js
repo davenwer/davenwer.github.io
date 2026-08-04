@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Project-Kreer Master Script Engine (Smart Intent Engine v2.1)
+   Project-Kreer Master Script Engine (Smart Intent Engine v2.2 - Mobile & Voice Enabled)
    ========================================================================== */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -226,7 +226,7 @@ async function initGitHubTelemetry() {
   }
 }
 
-/* 6. Smart AI Chatbot & Intent Engine Handler */
+/* 6. Smart AI Chatbot, Mobile Voice Engine & Intent Handler */
 function initCommandTerminal() {
   const triggerBtn = document.getElementById("cli-trigger");
   const drawer = document.getElementById("cli-drawer");
@@ -238,23 +238,83 @@ function initCommandTerminal() {
 
   if (!triggerBtn || !drawer || !closeBtn || !form || !input || !output) return;
 
+  // Fix 1: Unified Drawer Toggle Handling (ARIA + CSS Class)
   const openDrawer = (e) => {
     if (e) e.preventDefault();
+    drawer.setAttribute("aria-hidden", "false");
     drawer.classList.add("active");
   };
 
   const closeDrawer = (e) => {
     if (e) e.preventDefault();
+    drawer.setAttribute("aria-hidden", "true");
     drawer.classList.remove("active");
   };
 
   triggerBtn.addEventListener("click", openDrawer);
   closeBtn.addEventListener("click", closeDrawer);
 
+  // Fix 2: Robust Speech Recognition Engine (Voice-to-Text)
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (SpeechRecognition) {
+    let micBtn = document.getElementById("cli-mic-btn");
+    if (!micBtn) {
+      micBtn = document.createElement("button");
+      micBtn.id = "cli-mic-btn";
+      micBtn.type = "button";
+      micBtn.innerHTML = "🎙️";
+      micBtn.setAttribute("aria-label", "Activate Voice Input");
+      micBtn.style.cssText = "background:none; border:none; font-size:1.1rem; cursor:pointer; margin-left:6px; padding:2px;";
+      form.appendChild(micBtn);
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = "en-US";
+
+    let isListening = false;
+
+    micBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (!isListening) {
+        try {
+          recognition.start();
+          micBtn.innerHTML = "🔴";
+          isListening = true;
+        } catch (err) {
+          console.warn("Speech recognition active or blocked:", err);
+        }
+      } else {
+        recognition.stop();
+        micBtn.innerHTML = "🎙️";
+        isListening = false;
+      }
+    });
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      input.value = transcript;
+      micBtn.innerHTML = "🎙️";
+      isListening = false;
+    };
+
+    recognition.onerror = (err) => {
+      console.warn("Speech recognition error:", err);
+      micBtn.innerHTML = "🎙️";
+      isListening = false;
+    };
+
+    recognition.onend = () => {
+      micBtn.innerHTML = "🎙️";
+      isListening = false;
+    };
+  }
+
+  // Smart Intent Responses
   const getBotResponse = (query) => {
     const q = query.toLowerCase();
 
-    // System Commands
     if (q === "help") {
       return "Commands: <strong>status</strong>, <strong>theme</strong>, <strong>goto [section]</strong>, <strong>clear</strong>. Or ask about my <strong>skills</strong>, <strong>code</strong>, <strong>marketing</strong>, or <strong>projects</strong>!";
     }
@@ -270,7 +330,7 @@ function initCommandTerminal() {
       const targetEl = document.getElementById(target);
       if (targetEl) {
         targetEl.scrollIntoView({ behavior: "smooth" });
-        drawer.classList.remove("active");
+        closeDrawer();
         return `Navigated to #${target}`;
       }
       return `Section #${target} not found. Try: about, experience, projects, telemetry, contact`;
@@ -280,32 +340,26 @@ function initCommandTerminal() {
       return null;
     }
 
-    // Coding & App Development
     if (q.includes("code") || q.includes("program") || q.includes("app") || q.includes("build") || q.includes("develop") || q.includes("create")) {
       return "Yes! I write modern code for web applications, automated CI/CD deployment pipelines, and responsive platforms using JavaScript, Python, and robust system architectures.";
     }
 
-    // Background & Identity
     if (q.includes("who") || q.includes("about") || q.includes("old") || q.includes("age") || q.includes("okennachukwu") || q.includes("intro")) {
       return "I'm Okennachukwu—a technology specialist focused on scalable web architecture, systems engineering, data testing, and performance growth analytics.";
     }
 
-    // Marketing & E-Commerce
     if (q.includes("olist") || q.includes("marketing") || q.includes("e-commerce") || q.includes("ecommerce") || q.includes("amazon") || q.includes("yahands")) {
       return "E-Commerce & Marketing background:<br>• <strong>Marketing Team Lead @ Olist</strong> (2019–2021): Directed growth strategy, analytics, and business systems testing.<br>• <strong>Yahands Infrastructure</strong>: Amazon Seller Central integrations, automated product listings, and web systems.";
     }
 
-    // Tech Stack & Skills
     if (q.includes("skill") || q.includes("stack") || q.includes("python") || q.includes("js") || q.includes("javascript")) {
       return "Core Stack:<br>• <strong>Languages & Web</strong>: JavaScript (ES6+), Python, HTML5, CSS3<br>• <strong>AI & Automation</strong>: DeepSeek Models, Alpaca API, Multi-Agent Workflows<br>• <strong>Operations</strong>: Systems Testing & Data Accuracy Verification";
     }
 
-    // Projects & AI
     if (q.includes("project") || q.includes("agent") || q.includes("trading") || q.includes("ai") || q.includes("deepseek")) {
       return "Key Technical Projects:<br>1. <strong>Algorithmic Trading Agent</strong> (DeepSeek + Alpaca REST/WebSocket API)<br>2. <strong>Multi-Agent Workflow Engine</strong><br>3. <strong>Yahands E-Commerce & Web Infrastructure</strong><br>Tap any project card on the page to view detailed system specs!";
     }
 
-    // Contact
     if (q.includes("contact") || q.includes("email") || q.includes("hire") || q.includes("reach") || q.includes("message")) {
       return "You can connect directly using the <strong>Direct Message</strong> button in the Signal & Contact section, or via GitHub!";
     }
