@@ -1,0 +1,163 @@
+/* ==========================================================================
+   Project-Kreer: Starter Stylesheet
+   ========================================================================== */
+
+/* 1. Global Custom Properties (Design System Tokens) */
+:root {
+  /* Colors */
+  --bg-primary: #0f172a;       /* Dark slate background */
+  --bg-surface: #1e293b;       /* Card/surface background */
+  --bg-hover: #334155;         /* Subtle hover state */
+  --text-main: #f8fafc;        /* High-contrast text */
+  --text-muted: #94a3b8;       /* Subtle text */
+  --accent-color: #38bdf8;     /* Sky blue accent */
+  --border-color: #334155;     /* Structural borders */
+
+  /* Typography */
+  --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+
+  /* Layout & Animation */
+  --max-width: 1000px;
+  --radius: 8px;
+  --transition: all 0.2s ease-in-out;
+}
+
+/* 2. CSS Reset & Base Rules */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-main);
+  background-color: var(--bg-primary);
+  color: var(--text-main);
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 3. Structural Containers */
+header, main, footer {
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+main {
+  flex: 1;
+}
+
+/* 4. Navigation */
+header {
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+nav {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1.5rem;
+}
+
+nav a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+nav a:hover {
+  color: var(--accent-color);
+}
+
+/* 5. Headings & Content Typography */
+section {
+  padding: 4rem 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+section:last-of-type {
+  border-bottom: none;
+}
+
+h1, h2, h3 {
+  color: var(--text-main);
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 2.75rem;
+  margin-bottom: 1rem;
+}
+
+h2 {
+  font-size: 1.75rem;
+  color: var(--accent-color);
+  margin-bottom: 1.5rem;
+}
+
+p {
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+/* 6. Hero Section */
+#hero {
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+}
+
+#hero p {
+  font-size: 1.25rem;
+  max-width: 650px;
+}
+
+/* 7. Reusable Card Grid (Ideal for Projects & Experience) */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  transition: var(--transition);
+}
+
+.card:hover {
+  border-color: var(--accent-color);
+  transform: translateY(-2px);
+}
+
+/* 8. Footer */
+footer {
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  border-top: 1px solid var(--border-color);
+}
+
+/* 9. Mobile Responsiveness */
+@media (max-width: 600px) {
+  #hero h1 {
+    font-size: 2.25rem;
+  }
+
+  nav {
+    justify-content: center;
+  }
+}
