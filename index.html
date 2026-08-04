@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project-Kreer | Vault Core</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --card: #161b22;
+      --accent: #58a6ff;
+      --text: #c9d1d9;
+      --success: #3fb950;
+    }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .container {
+      width: 100%;
+      max-width: 500px;
+    }
+    .header {
+      border-bottom: 1px solid #30363d;
+      padding-bottom: 15px;
+      margin-bottom: 20px;
+    }
+    h1 {
+      color: #f0f6fc;
+      font-size: 1.5rem;
+      margin: 0;
+    }
+    .status-badge {
+      display: inline-block;
+      background: rgba(63, 185, 80, 0.15);
+      color: var(--success);
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      margin-top: 8px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 15px;
+    }
+    .card h3 {
+      margin-top: 0;
+      color: var(--accent);
+      font-size: 1rem;
+    }
+    p {
+      font-size: 0.9rem;
+      line-height: 1.4;
+      color: #8b949e;
+      margin-bottom: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>PROJECT-KREER</h1>
+      <div class="status-badge">● SYSTEM ONLINE (YEAR 1)</div>
+    </div>
+
+    <div class="card">
+      <h3>Vault Module 0.1</h3>
+      <p>Cryptographic Identity & Local Data Storage initialized. Awaiting cryptographic key setup.</p>
+    </div>
+
+    <div class="card">
+      <h3>Build Cadence</h3>
+      <p>Mobile-first architecture powered by voice intent and daily micro-commits.</p>
+    </div>
+  </div>
+</body>
+</html>
