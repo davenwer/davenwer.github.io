@@ -100,4 +100,81 @@ function initScrollSpy() {
       }
     });
   });
+
+   /**
+ * 4. Interactive Project Detail Modals
+ */
+const projectDetails = {
+  "Algorithmic Trading Agent": {
+    architecture: "Event-driven architecture connecting local DeepSeek reasoning engine to Alpaca REST/WebSocket endpoints.",
+    features: [
+      "Real-time market order submission and backtesting engine",
+      "Dynamic risk-management rules with automated stop-loss execution",
+      "Historical data parsing for trade signal generation"
+    ]
+  },
+  "Multi-Agent Workflow Engine": {
+    architecture: "Autonomous multi-agent orchestration framework running local simulation environments.",
+    features: [
+      "Asynchronous message passing across agent nodes",
+      "Custom role delegation for task execution and verification",
+      "Pipeline logging and automated fallback states"
+    ]
+  },
+  "Yahands E-Commerce & Web Infrastructure": {
+    architecture: "Static frontend backed by automated deployment actions and centralized product data management.",
+    features: [
+      "Automated listing data sync and image optimization pipelines",
+      "Mobile-optimized catalog browsing and authorization workflows",
+      "CI/CD continuous delivery integration"
+    ]
+  }
+};
+
+function initProjectModals() {
+  const modal = document.getElementById("project-modal");
+  const modalBody = document.getElementById("modal-body");
+  const closeBtn = document.getElementById("modal-close-btn");
+  const projectCards = document.querySelectorAll(".project-card");
+
+  if (!modal || !modalBody || !closeBtn) return;
+
+  projectCards.forEach((card) => {
+    card.addEventListener("click", () => {
+      const title = card.querySelector("h3")?.textContent.trim();
+      const details = projectDetails[title];
+
+      if (!details) return;
+
+      modalBody.innerHTML = `
+        <h3>${title}</h3>
+        <h4>System Architecture</h4>
+        <p>${details.architecture}</p>
+        <h4>Key Technical Highlights</h4>
+        <ul>
+          ${details.features.map(f => `<li>${f}</li>`).join("")}
+        </ul>
+      `;
+
+      modal.classList.add("active");
+      document.body.style.overflow = "hidden"; // Prevent background scroll
+    });
+  });
+
+  const closeModal = () => {
+    modal.classList.remove("active");
+    document.body.style.overflow = "";
+  };
+
+  closeBtn.addEventListener("click", closeModal);
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) closeModal();
+  });
+}
+
+// Call inside DOMContentLoaded
+document.addEventListener("DOMContentLoaded", () => {
+  initProjectModals();
+});
+
 }
