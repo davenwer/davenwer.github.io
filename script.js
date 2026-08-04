@@ -315,16 +315,34 @@ function initCommandTerminal() {
   const getBotResponse = (query) => {
     const q = query.toLowerCase();
 
+        // System Commands
     if (q === "help") {
       return "Commands: <strong>status</strong>, <strong>theme</strong>, <strong>goto [section]</strong>, <strong>clear</strong>. Or ask about my <strong>skills</strong>, <strong>code</strong>, <strong>marketing</strong>, or <strong>projects</strong>!";
     }
     if (q === "status") {
       return "SYSTEM STATUS: All systems operational | Telemetry: Live via GitHub API";
     }
-    if (q === "theme") {
-      document.body.classList.toggle("green-theme");
-      return "🎨 Interface theme toggled successfully!";
+    
+    // Dynamic Theme Toggle (Direct CSS Property Override)
+    if (q.includes("theme")) {
+      const isAlt = document.body.classList.toggle("alt-theme");
+      const root = document.documentElement;
+
+      if (isAlt) {
+        // Switch to Terminal Emerald Theme
+        root.style.setProperty("--accent-color", "#3fb950");
+        root.style.setProperty("--bg-hover", "rgba(63, 185, 80, 0.15)");
+        root.style.setProperty("--text-primary", "#2ea44f");
+        return "🎨 Theme switched: **Terminal Emerald**";
+      } else {
+        // Restore Default Theme
+        root.style.removeProperty("--accent-color");
+        root.style.removeProperty("--bg-hover");
+        root.style.removeProperty("--text-primary");
+        return "🎨 Theme restored: **Slate Dark Default**";
+      }
     }
+
     if (q.startsWith("goto ")) {
       const target = q.replace("goto ", "").trim();
       const targetEl = document.getElementById(target);
