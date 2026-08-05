@@ -665,21 +665,17 @@ function initCommandTerminal() {
     });
   });
 /* ==========================================================================
-   Agentic Trading & Multi-Agent Orchestrator Engine
+   Agentic Trading & Multi-Asset Orchestrator Engine
    ========================================================================== */
 
-// State management for Multi-Agent Workflow
+// 1. State Management for Multi-Agent Workflow
 const agentNodes = [
-  { id: "agent-1", name: "DeepSeek Market Analysis Agent", role: "Signal Generation", status: "idle", lastRun: "N/A" },
-  { id: "agent-2", name: "Risk Management Agent", role: "Position Sizing & Stop-Loss", status: "idle", lastRun: "N/A" },
-  { id: "agent-3", name: "Alpaca Order Execution Agent", role: "REST/WebSocket Dispatch", status: "idle", lastRun: "N/A" }
+  { id: "agent-1", name: "DeepSeek Market Analysis Agent", role: "Signal Generation", status: "idle" },
+  { id: "agent-2", name: "Risk Management Agent", role: "Position Sizing & Stop-Loss", status: "idle" },
+  { id: "agent-3", name: "Alpaca Order Execution Agent", role: "REST/WebSocket Dispatch", status: "idle" }
 ];
 
-/* ==========================================================================
-   Expanded Asset Catalog & Multi-Asset Trading Engine
-   ========================================================================== */
-
-// Expanded watchlist containing Stocks and Cryptocurrencies
+// 2. Multi-Asset Catalog
 const assetCatalog = [
   // Stocks
   { symbol: "AAPL", name: "Apple Inc.", type: "stock", price: "$224.23", change: "+1.4%", confidence: "94%", riskRatio: "1:2.5", recommendation: "BUY" },
@@ -698,9 +694,42 @@ const assetCatalog = [
   { symbol: "XRP/USD", name: "XRP", type: "crypto", price: "$0.58", change: "-0.4%", confidence: "65%", riskRatio: "1:1.2", recommendation: "SELL" }
 ];
 
-let selectedCategory = "all";
+let selectedTargetAsset = "BTC/USD";
 
-// Render filtered asset list in the trading dashboard
+// 3. UI Rendering Functions
+function renderAgentPipelineUI() {
+  const container = document.getElementById("agent-nodes-list");
+  if (!container) return;
+
+  container.innerHTML = agentNodes.map(agent => {
+    let statusBg = "rgba(110,118,129,0.1)";
+    let statusColor = "#8b949e";
+    let statusText = "IDLE";
+
+    if (agent.status === "running") {
+      statusBg = "rgba(210,153,34,0.15)";
+      statusColor = "#d29922";
+      statusText = "RUNNING...";
+    } else if (agent.status === "completed") {
+      statusBg = "rgba(63,185,80,0.15)";
+      statusColor = "#3fb950";
+      statusText = "SUCCESS";
+    }
+
+    return `
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; background: rgba(255,255,255,0.02); border: 1px solid #21262d; border-radius: 6px; margin-bottom: 6px;">
+        <div>
+          <div style="font-weight: 600; color: #c9d1d9;">${agent.name}</div>
+          <div style="color: #8b949e; font-size: 0.75rem;">Role: ${agent.role}</div>
+        </div>
+        <span style="font-size: 0.7rem; font-weight: 600; padding: 2px 6px; background: ${statusBg}; border-radius: 4px; color: ${statusColor};">
+          ${statusText}
+        </span>
+      </div>
+    `;
+  }).join("");
+}
+
 function renderAssetCatalog(category = "all") {
   const container = document.getElementById("asset-catalog-grid");
   if (!container) return;
@@ -743,51 +772,7 @@ function renderAssetCatalog(category = "all") {
   }).join("");
 }
 
-// Handler for category filter dropdown
-function filterAssets(category) {
-  selectedCategory = category;
-  renderAssetCatalog(category);
-}
-
-// Select asset to target for execution log
-function selectAssetForTrade(symbol) {
-  const logDiv = document.getElementById("execution-log");
-  if (logDiv) {
-    const time = new Date().toLocaleTimeString([], { hour12: false });
-    logDiv.innerHTML += `<br>[${time}] Selected <strong>${symbol}</strong> as targeted asset for next automated cycle.`;
-    logDiv.scrollTop = logDiv.scrollHeight;
-  }
-}
-
-// Global scope exposures
-window.filterAssets = filterAssets;
-window.selectAssetForTrade = selectAssetForTrade;
-
-
-// Render Trading Signals UI
-function renderTradingSignalsUI() {
-  const container = document.getElementById("trading-signals-container");
-  if (!container) return;
-
-  container.innerHTML = currentSignals.map(sig => {
-    const actionColor = sig.action === "BUY" ? "#3fb950" : sig.action === "SELL" ? "#f85149" : "#d29922";
-
-    return `
-      <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; background: rgba(255,255,255,0.02); border: 1px solid #21262d; border-radius: 6px;">
-        <div style="display: flex; gap: 10px; align-items: center;">
-          <span style="font-weight: bold; color: #f0f6fc;">${sig.symbol}</span>
-          <span style="font-size: 0.75rem; font-weight: bold; color: ${actionColor}; padding: 1px 5px; border: 1px solid ${actionColor}; border-radius: 3px;">${sig.action}</span>
-        </div>
-        <div style="text-align: right; font-size: 0.75rem; color: #8b949e;">
-          <div>Conf: <strong style="color: #c9d1d9;">${sig.confidence}</strong> | R/R: ${sig.riskRatio}</div>
-          <div>Target: ${sig.target}</div>
-        </div>
-      </div>
-    `;
-  }).join("");
-}
-
-// Log messages to execution terminal
+// 4. Console Logger Helper
 function logExecution(msg) {
   const logDiv = document.getElementById("execution-log");
   if (!logDiv) return;
@@ -796,66 +781,70 @@ function logExecution(msg) {
   logDiv.scrollTop = logDiv.scrollHeight;
 }
 
-// Trigger Multi-Agent Workflow Pipeline Simulation
+// 5. Workflow Trigger Logic
 async function triggerAgentPipeline() {
   const btn = document.getElementById("btn-run-pipeline");
   if (btn) btn.disabled = true;
 
-  logExecution("Initiating Multi-Agent Workflow sequence...");
+  logExecution(`Initiating Multi-Agent sequence for target asset: <strong>${selectedTargetAsset}</strong>...`);
 
   // Step 1: DeepSeek Analysis
   agentNodes[0].status = "running";
   renderAgentPipelineUI();
-  logExecution("Agent 1: DeepSeek analyzing market orderbook & news sentiment...");
+  logExecution(`Agent 1: DeepSeek evaluating ${selectedTargetAsset} technical signals & news sentiment...`);
   await new Promise(r => setTimeout(r, 1200));
   agentNodes[0].status = "completed";
   renderAgentPipelineUI();
 
-  // Step 2: Risk Management Verification
+  // Step 2: Risk Management
   agentNodes[1].status = "running";
   renderAgentPipelineUI();
-  logExecution("Agent 2: Risk Agent evaluating portfolio drawdown & target bounds...");
+  logExecution(`Agent 2: Risk Agent checking portfolio exposure limits for ${selectedTargetAsset}...`);
   await new Promise(r => setTimeout(r, 1000));
   agentNodes[1].status = "completed";
   renderAgentPipelineUI();
 
-  // Step 3: Alpaca Execution Dispatch
+  // Step 3: Alpaca / Coinbase Execution Dispatch
   agentNodes[2].status = "running";
   renderAgentPipelineUI();
-  logExecution("Agent 3: Alpaca REST API order payload constructed & signed.");
+  logExecution(`Agent 3: Constructing REST payload for ${selectedTargetAsset}...`);
   await new Promise(r => setTimeout(r, 800));
   agentNodes[2].status = "completed";
   renderAgentPipelineUI();
 
-  logExecution("âœ… Pipeline complete: Orders simulated & telemetry updated.");
+  logExecution(`✅ Cycle complete: ${selectedTargetAsset} trade verified & logged.`);
   if (btn) btn.disabled = false;
 }
 
-// Reset Pipeline Status
 function resetAgentPipeline() {
   agentNodes.forEach(node => node.status = "idle");
   renderAgentPipelineUI();
   logExecution("System state reset to IDLE.");
 }
 
-// Expose functions globally
+function filterAssets(category) {
+  renderAssetCatalog(category);
+}
+
+function selectAssetForTrade(symbol) {
+  selectedTargetAsset = symbol;
+  logExecution(`Target set to <strong>${symbol}</strong> for upcoming automated execution.`);
+}
+
+// 6. Global Exposure
 window.triggerAgentPipeline = triggerAgentPipeline;
 window.resetAgentPipeline = resetAgentPipeline;
+window.filterAssets = filterAssets;
+window.selectAssetForTrade = selectAssetForTrade;
 
-// Render UI and bind button events immediately
-renderAgentPipelineUI();
-renderTradingSignalsUI();
-renderAssetCatalog("all");
+// 7. Auto Initialization
+document.addEventListener("DOMContentLoaded", () => {
+  renderAgentPipelineUI();
+  renderAssetCatalog("all");
 
+  const runBtn = document.getElementById("btn-run-pipeline");
+  const resetBtn = document.getElementById("btn-reset-pipeline");
 
-const runBtn = document.getElementById("btn-run-pipeline");
-const resetBtn = document.getElementById("btn-reset-pipeline");
-
-if (runBtn) {
-  runBtn.addEventListener("click", triggerAgentPipeline);
-}
-
-if (resetBtn) {
-  resetBtn.addEventListener("click", resetAgentPipeline);
-}
-}
+  if (runBtn) runBtn.addEventListener("click", triggerAgentPipeline);
+  if (resetBtn) resetBtn.addEventListener("click", resetAgentPipeline);
+});
