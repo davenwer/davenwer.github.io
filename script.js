@@ -227,6 +227,7 @@ async function copyAllVaultEntries() {
     console.error("Clipboard copy failed:", err);
   });
 }
+
 /* --------------------------------------------------------------------------
    2. DOM Initialization Engine
    -------------------------------------------------------------------------- */
@@ -242,6 +243,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     await window.coreVault.initDB();
     renderVaultUI();
   }
+
+  // Trading Pipeline Initialization
+  renderAgentPipelineUI();
+  renderAssetCatalog("all");
+
+  const runBtn = document.getElementById("btn-run-pipeline");
+  const resetBtn = document.getElementById("btn-reset-pipeline");
+
+  if (runBtn) runBtn.addEventListener("click", triggerAgentPipeline);
+  if (resetBtn) resetBtn.addEventListener("click", resetAgentPipeline);
 });
 
 /* --------------------------------------------------------------------------
@@ -664,7 +675,8 @@ function initCommandTerminal() {
       if (cmd) processQuery(cmd);
     });
   });
-}
+} // Closing brace added to fix syntax error
+
 /* ==========================================================================
    Agentic Trading & Multi-Asset Orchestrator Engine
    ========================================================================== */
@@ -837,15 +849,3 @@ window.triggerAgentPipeline = triggerAgentPipeline;
 window.resetAgentPipeline = resetAgentPipeline;
 window.filterAssets = filterAssets;
 window.selectAssetForTrade = selectAssetForTrade;
-
-// 7. Auto Initialization
-document.addEventListener("DOMContentLoaded", () => {
-  renderAgentPipelineUI();
-  renderAssetCatalog("all");
-
-  const runBtn = document.getElementById("btn-run-pipeline");
-  const resetBtn = document.getElementById("btn-reset-pipeline");
-
-  if (runBtn) runBtn.addEventListener("click", triggerAgentPipeline);
-  if (resetBtn) resetBtn.addEventListener("click", resetAgentPipeline);
-});
