@@ -483,8 +483,6 @@
   <script src="script.js" defer></script>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      loadVault();
-
       // Reliable Drawer Toggle Fix
       const cliTrigger = document.getElementById("cli-trigger");
       const cliDrawer = document.getElementById("cli-drawer");
@@ -505,15 +503,8 @@
         });
       }
     });
-
-         display.innerHTML = entries.map(e => `
-        <div class="entry-item">
-          <div>${e.text}</div>
-          <div style="color: #8b949e; font-size: 0.7rem; margin-top: 4px;">${e.timestamp}</div>
-        </div>
-      `).join('');
-    }
   </script>
+
 
 
   <!-- Project Detail Modal Container -->
