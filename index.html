@@ -376,7 +376,31 @@
   </h2>
   
   <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-top: 1rem;">
+    <!-- Multi-Asset Browser Section -->
+<div style="background: #0d1117; border: 1px solid #30363d; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+    <div>
+      <h3 style="margin: 0; color: #f0f6fc; font-size: 1.1rem;">Asset Catalog & Market Intelligence</h3>
+      <p style="margin: 4px 0 0 0; color: #8b949e; font-size: 0.8rem;">Filter and select crypto or stocks for DeepSeek execution</p>
+    </div>
     
+    <!-- Filter Dropdown & Controls -->
+    <div style="display: flex; gap: 8px; align-items: center;">
+      <label for="asset-type-select" style="color: #8b949e; font-size: 0.8rem;">Asset Type:</label>
+      <select id="asset-type-select" onchange="filterAssets(this.value)" style="background: #161b22; color: #c9d1d9; border: 1px solid #30363d; border-radius: 6px; padding: 6px 12px; font-size: 0.85rem; cursor: pointer;">
+        <option value="all">All Markets (Stocks & Crypto)</option>
+        <option value="crypto">Cryptocurrency Only</option>
+        <option value="stock">US Equities Only</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Asset Grid Container -->
+  <div id="asset-catalog-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px;">
+    <!-- Rendered dynamically by script.js -->
+  </div>
+</div>
+
     <!-- Panel 1: Multi-Agent Pipeline Orchestrator -->
     <div class="card" style="background: rgba(22, 27, 34, 0.7); border: 1px solid #30363d; padding: 16px; border-radius: 8px;">
       <h3 style="font-size: 1rem; margin-bottom: 12px; color: #58a6ff;">🕸️ Agent Pipeline Status</h3>
