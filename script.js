@@ -791,29 +791,22 @@ function resetAgentPipeline() {
   logExecution("System state reset to IDLE.");
 }
 
-// Initialize Module on Load
-document.addEventListener("DOMContentLoaded", () => {
-  renderAgentPipelineUI();
-  renderTradingSignalsUI();
-});
-// Expose functions globally to ensure window accessibility
+// Expose functions globally
 window.triggerAgentPipeline = triggerAgentPipeline;
 window.resetAgentPipeline = resetAgentPipeline;
 
-// Bind event listeners securely on DOM ready
-document.addEventListener("DOMContentLoaded", () => {
-  renderAgentPipelineUI();
-  renderTradingSignalsUI();
+// Render UI and bind button events immediately
+renderAgentPipelineUI();
+renderTradingSignalsUI();
 
-  const runBtn = document.getElementById("btn-run-pipeline");
-  const resetBtn = document.getElementById("btn-reset-pipeline");
+const runBtn = document.getElementById("btn-run-pipeline");
+const resetBtn = document.getElementById("btn-reset-pipeline");
 
-  if (runBtn) {
-    runBtn.addEventListener("click", triggerAgentPipeline);
-  }
-  
-  if (resetBtn) {
-    resetBtn.addEventListener("click", resetAgentPipeline);
-  }
-});
+if (runBtn) {
+  runBtn.addEventListener("click", triggerAgentPipeline);
+}
+
+if (resetBtn) {
+  resetBtn.addEventListener("click", resetAgentPipeline);
+}
 }
