@@ -796,5 +796,24 @@ document.addEventListener("DOMContentLoaded", () => {
   renderAgentPipelineUI();
   renderTradingSignalsUI();
 });
+// Expose functions globally to ensure window accessibility
+window.triggerAgentPipeline = triggerAgentPipeline;
+window.resetAgentPipeline = resetAgentPipeline;
 
+// Bind event listeners securely on DOM ready
+document.addEventListener("DOMContentLoaded", () => {
+  renderAgentPipelineUI();
+  renderTradingSignalsUI();
+
+  const runBtn = document.getElementById("btn-run-pipeline");
+  const resetBtn = document.getElementById("btn-reset-pipeline");
+
+  if (runBtn) {
+    runBtn.addEventListener("click", triggerAgentPipeline);
+  }
+  
+  if (resetBtn) {
+    resetBtn.addEventListener("click", resetAgentPipeline);
+  }
+});
 }
