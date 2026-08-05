@@ -664,6 +664,16 @@ function initCommandTerminal() {
       if (cmd) processQuery(cmd);
     });
   });
+/* ==========================================================================
+   Agentic Trading & Multi-Agent Orchestrator Engine
+   ========================================================================== */
+
+// State management for Multi-Agent Workflow
+const agentNodes = [
+  { id: "agent-1", name: "DeepSeek Market Analysis Agent", role: "Signal Generation", status: "idle", lastRun: "N/A" },
+  { id: "agent-2", name: "Risk Management Agent", role: "Position Sizing & Stop-Loss", status: "idle", lastRun: "N/A" },
+  { id: "agent-3", name: "Alpaca Order Execution Agent", role: "REST/WebSocket Dispatch", status: "idle", lastRun: "N/A" }
+];
 
 /* ==========================================================================
    Expanded Asset Catalog & Multi-Asset Trading Engine
@@ -739,7 +749,7 @@ function filterAssets(category) {
   renderAssetCatalog(category);
 }
 
-// Function to select an asset for execution
+// Select asset to target for execution log
 function selectAssetForTrade(symbol) {
   const logDiv = document.getElementById("execution-log");
   if (logDiv) {
@@ -749,11 +759,103 @@ function selectAssetForTrade(symbol) {
   }
 }
 
-// Global scope exposure
+// Global scope exposures
 window.filterAssets = filterAssets;
 window.selectAssetForTrade = selectAssetForTrade;
 
-// Initialize grid on load
-document.addEventListener("DOMContentLoaded", () => {
-  renderAssetCatalog("all");
-});
+
+// Render Trading Signals UI
+function renderTradingSignalsUI() {
+  const container = document.getElementById("trading-signals-container");
+  if (!container) return;
+
+  container.innerHTML = currentSignals.map(sig => {
+    const actionColor = sig.action === "BUY" ? "#3fb950" : sig.action === "SELL" ? "#f85149" : "#d29922";
+
+    return `
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; background: rgba(255,255,255,0.02); border: 1px solid #21262d; border-radius: 6px;">
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <span style="font-weight: bold; color: #f0f6fc;">${sig.symbol}</span>
+          <span style="font-size: 0.75rem; font-weight: bold; color: ${actionColor}; padding: 1px 5px; border: 1px solid ${actionColor}; border-radius: 3px;">${sig.action}</span>
+        </div>
+        <div style="text-align: right; font-size: 0.75rem; color: #8b949e;">
+          <div>Conf: <strong style="color: #c9d1d9;">${sig.confidence}</strong> | R/R: ${sig.riskRatio}</div>
+          <div>Target: ${sig.target}</div>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+// Log messages to execution terminal
+function logExecution(msg) {
+  const logDiv = document.getElementById("execution-log");
+  if (!logDiv) return;
+  const time = new Date().toLocaleTimeString([], { hour12: false });
+  logDiv.innerHTML += `<br>[${time}] ${msg}`;
+  logDiv.scrollTop = logDiv.scrollHeight;
+}
+
+// Trigger Multi-Agent Workflow Pipeline Simulation
+async function triggerAgentPipeline() {
+  const btn = document.getElementById("btn-run-pipeline");
+  if (btn) btn.disabled = true;
+
+  logExecution("Initiating Multi-Agent Workflow sequence...");
+
+  // Step 1: DeepSeek Analysis
+  agentNodes[0].status = "running";
+  renderAgentPipelineUI();
+  logExecution("Agent 1: DeepSeek analyzing market orderbook & news sentiment...");
+  await new Promise(r => setTimeout(r, 1200));
+  agentNodes[0].status = "completed";
+  renderAgentPipelineUI();
+
+  // Step 2: Risk Management Verification
+  agentNodes[1].status = "running";
+  renderAgentPipelineUI();
+  logExecution("Agent 2: Risk Agent evaluating portfolio drawdown & target bounds...");
+  await new Promise(r => setTimeout(r, 1000));
+  agentNodes[1].status = "completed";
+  renderAgentPipelineUI();
+
+  // Step 3: Alpaca Execution Dispatch
+  agentNodes[2].status = "running";
+  renderAgentPipelineUI();
+  logExecution("Agent 3: Alpaca REST API order payload constructed & signed.");
+  await new Promise(r => setTimeout(r, 800));
+  agentNodes[2].status = "completed";
+  renderAgentPipelineUI();
+
+  logExecution("âœ… Pipeline complete: Orders simulated & telemetry updated.");
+  if (btn) btn.disabled = false;
+}
+
+// Reset Pipeline Status
+function resetAgentPipeline() {
+  agentNodes.forEach(node => node.status = "idle");
+  renderAgentPipelineUI();
+  logExecution("System state reset to IDLE.");
+}
+
+// Expose functions globally
+window.triggerAgentPipeline = triggerAgentPipeline;
+window.resetAgentPipeline = resetAgentPipeline;
+
+// Render UI and bind button events immediately
+renderAgentPipelineUI();
+renderTradingSignalsUI();
+renderAssetCatalog("all");
+
+
+const runBtn = document.getElementById("btn-run-pipeline");
+const resetBtn = document.getElementById("btn-reset-pipeline");
+
+if (runBtn) {
+  runBtn.addEventListener("click", triggerAgentPipeline);
+}
+
+if (resetBtn) {
+  resetBtn.addEventListener("click", resetAgentPipeline);
+}
+}
