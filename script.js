@@ -664,6 +664,7 @@ function initCommandTerminal() {
       if (cmd) processQuery(cmd);
     });
   });
+}
 /* ==========================================================================
    Agentic Trading & Multi-Asset Orchestrator Engine
    ========================================================================== */
