@@ -666,147 +666,94 @@ function initCommandTerminal() {
   });
 
 /* ==========================================================================
-   Agentic Trading & Multi-Agent Orchestrator Engine
+   Expanded Asset Catalog & Multi-Asset Trading Engine
    ========================================================================== */
 
-// State management for Multi-Agent Workflow
-const agentNodes = [
-  { id: "agent-1", name: "DeepSeek Market Analysis Agent", role: "Signal Generation", status: "idle", lastRun: "N/A" },
-  { id: "agent-2", name: "Risk Management Agent", role: "Position Sizing & Stop-Loss", status: "idle", lastRun: "N/A" },
-  { id: "agent-3", name: "Alpaca Order Execution Agent", role: "REST/WebSocket Dispatch", status: "idle", lastRun: "N/A" }
+// Expanded watchlist containing Stocks and Cryptocurrencies
+const assetCatalog = [
+  // Stocks
+  { symbol: "AAPL", name: "Apple Inc.", type: "stock", price: "$224.23", change: "+1.4%", confidence: "94%", riskRatio: "1:2.5", recommendation: "BUY" },
+  { symbol: "NVDA", name: "NVIDIA Corp.", type: "stock", price: "$128.50", change: "-0.8%", confidence: "88%", riskRatio: "1:2.1", recommendation: "BUY" },
+  { symbol: "TSLA", name: "Tesla Inc.", type: "stock", price: "$210.15", change: "+3.2%", confidence: "72%", riskRatio: "1:1.5", recommendation: "HOLD" },
+  { symbol: "AMZN", name: "Amazon.com Inc.", type: "stock", price: "$186.40", change: "+0.9%", confidence: "91%", riskRatio: "1:2.8", recommendation: "BUY" },
+  { symbol: "MSFT", name: "Microsoft Corp.", type: "stock", price: "$448.90", change: "+0.3%", confidence: "85%", riskRatio: "1:2.0", recommendation: "HOLD" },
+  { symbol: "AMD", name: "Advanced Micro Devices", type: "stock", price: "$156.30", change: "-1.7%", confidence: "68%", riskRatio: "1:1.4", recommendation: "SELL" },
+  
+  // Crypto
+  { symbol: "BTC/USD", name: "Bitcoin", type: "crypto", price: "$67,850.00", change: "+2.8%", confidence: "89%", riskRatio: "1:3.1", recommendation: "BUY" },
+  { symbol: "ETH/USD", name: "Ethereum", type: "crypto", price: "$3,480.20", change: "+1.9%", confidence: "86%", riskRatio: "1:2.4", recommendation: "BUY" },
+  { symbol: "SOL/USD", name: "Solana", type: "crypto", price: "$142.60", change: "+5.4%", confidence: "93%", riskRatio: "1:3.5", recommendation: "BUY" },
+  { symbol: "AVAX/USD", name: "Avalanche", type: "crypto", price: "$28.40", change: "-2.1%", confidence: "74%", riskRatio: "1:1.7", recommendation: "HOLD" },
+  { symbol: "LINK/USD", name: "Chainlink", type: "crypto", price: "$14.10", change: "+0.5%", confidence: "80%", riskRatio: "1:2.2", recommendation: "BUY" },
+  { symbol: "XRP/USD", name: "XRP", type: "crypto", price: "$0.58", change: "-0.4%", confidence: "65%", riskRatio: "1:1.2", recommendation: "SELL" }
 ];
 
-// Active mock signals for the trading dashboard
-let currentSignals = [
-  { symbol: "AAPL", action: "BUY", confidence: "94%", target: "$235.00", riskRatio: "1:2.5" },
-  { symbol: "NVDA", action: "HOLD", confidence: "78%", target: "$130.00", riskRatio: "1:1.8" },
-  { symbol: "BTC/USD", action: "BUY", confidence: "89%", target: "$68,500", riskRatio: "1:3.1" }
-];
+let selectedCategory = "all";
 
-// Render Agent Pipeline Status UI
-function renderAgentPipelineUI() {
-  const container = document.getElementById("agent-nodes-list");
+// Render filtered asset list in the trading dashboard
+function renderAssetCatalog(category = "all") {
+  const container = document.getElementById("asset-catalog-grid");
   if (!container) return;
 
-  container.innerHTML = agentNodes.map(agent => {
-    let statusBg = "rgba(110,118,129,0.1)";
-    let statusColor = "#8b949e";
-    let statusText = "IDLE";
+  const filteredAssets = assetCatalog.filter(asset => {
+    if (category === "all") return true;
+    return asset.type === category;
+  });
 
-    if (agent.status === "running") {
-      statusBg = "rgba(210,153,34,0.15)";
-      statusColor = "#d29922";
-      statusText = "RUNNING...";
-    } else if (agent.status === "completed") {
-      statusBg = "rgba(63,185,80,0.15)";
-      statusColor = "#3fb950";
-      statusText = "SUCCESS";
-    }
+  container.innerHTML = filteredAssets.map(asset => {
+    const isBuy = asset.recommendation === "BUY";
+    const isSell = asset.recommendation === "SELL";
+    const badgeColor = isBuy ? "#3fb950" : isSell ? "#f85149" : "#d29922";
+    const changeColor = asset.change.startsWith("+") ? "#3fb950" : "#f85149";
 
     return `
-      <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; background: rgba(255,255,255,0.02); border: 1px solid #21262d; border-radius: 6px;">
-        <div>
-          <div style="font-weight: 600; color: #c9d1d9;">${agent.name}</div>
-          <div style="color: #8b949e; font-size: 0.75rem;">Role: ${agent.role}</div>
+      <div style="background: rgba(22, 27, 34, 0.75); border: 1px solid #30363d; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; justify-content: space-between; gap: 8px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+          <div>
+            <span style="font-weight: 700; color: #f0f6fc; font-size: 1rem;">${asset.symbol}</span>
+            <div style="font-size: 0.75rem; color: #8b949e;">${asset.name}</div>
+          </div>
+          <span style="font-size: 0.7rem; font-weight: 700; color: ${badgeColor}; border: 1px solid ${badgeColor}; padding: 2px 6px; border-radius: 4px;">
+            ${asset.recommendation}
+          </span>
         </div>
-        <span style="font-size: 0.7rem; font-weight: 600; padding: 2px 6px; background: ${statusBg}; border-radius: 4px; color: ${statusColor};">
-          ${statusText}
-        </span>
+        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-top: 4px;">
+          <span style="font-size: 1.1rem; font-weight: 600; color: #c9d1d9;">${asset.price}</span>
+          <span style="font-size: 0.8rem; font-weight: 600; color: ${changeColor};">${asset.change}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: #8b949e; border-top: 1px solid #21262d; padding-top: 6px;">
+          <span>DeepSeek Conf: <strong style="color: #c9d1d9;">${asset.confidence}</strong></span>
+          <span>R/R: <strong style="color: #c9d1d9;">${asset.riskRatio}</strong></span>
+        </div>
+        <button onclick="selectAssetForTrade('${asset.symbol}')" style="margin-top: 4px; padding: 6px; background: #21262d; border: 1px solid #30363d; color: #58a6ff; border-radius: 4px; font-size: 0.75rem; cursor: pointer; font-weight: 600;">
+          Select for Execution
+        </button>
       </div>
     `;
   }).join("");
 }
 
-// Render Trading Signals UI
-function renderTradingSignalsUI() {
-  const container = document.getElementById("trading-signals-container");
-  if (!container) return;
-
-  container.innerHTML = currentSignals.map(sig => {
-    const actionColor = sig.action === "BUY" ? "#3fb950" : sig.action === "SELL" ? "#f85149" : "#d29922";
-
-    return `
-      <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; background: rgba(255,255,255,0.02); border: 1px solid #21262d; border-radius: 6px;">
-        <div style="display: flex; gap: 10px; align-items: center;">
-          <span style="font-weight: bold; color: #f0f6fc;">${sig.symbol}</span>
-          <span style="font-size: 0.75rem; font-weight: bold; color: ${actionColor}; padding: 1px 5px; border: 1px solid ${actionColor}; border-radius: 3px;">${sig.action}</span>
-        </div>
-        <div style="text-align: right; font-size: 0.75rem; color: #8b949e;">
-          <div>Conf: <strong style="color: #c9d1d9;">${sig.confidence}</strong> | R/R: ${sig.riskRatio}</div>
-          <div>Target: ${sig.target}</div>
-        </div>
-      </div>
-    `;
-  }).join("");
+// Handler for category filter dropdown
+function filterAssets(category) {
+  selectedCategory = category;
+  renderAssetCatalog(category);
 }
 
-// Log messages to execution terminal
-function logExecution(msg) {
+// Function to select an asset for execution
+function selectAssetForTrade(symbol) {
   const logDiv = document.getElementById("execution-log");
-  if (!logDiv) return;
-  const time = new Date().toLocaleTimeString([], { hour12: false });
-  logDiv.innerHTML += `<br>[${time}] ${msg}`;
-  logDiv.scrollTop = logDiv.scrollHeight;
+  if (logDiv) {
+    const time = new Date().toLocaleTimeString([], { hour12: false });
+    logDiv.innerHTML += `<br>[${time}] Selected <strong>${symbol}</strong> as targeted asset for next automated cycle.`;
+    logDiv.scrollTop = logDiv.scrollHeight;
+  }
 }
 
-// Trigger Multi-Agent Workflow Pipeline Simulation
-async function triggerAgentPipeline() {
-  const btn = document.getElementById("btn-run-pipeline");
-  if (btn) btn.disabled = true;
+// Global scope exposure
+window.filterAssets = filterAssets;
+window.selectAssetForTrade = selectAssetForTrade;
 
-  logExecution("Initiating Multi-Agent Workflow sequence...");
-
-  // Step 1: DeepSeek Analysis
-  agentNodes[0].status = "running";
-  renderAgentPipelineUI();
-  logExecution("Agent 1: DeepSeek analyzing market orderbook & news sentiment...");
-  await new Promise(r => setTimeout(r, 1200));
-  agentNodes[0].status = "completed";
-  renderAgentPipelineUI();
-
-  // Step 2: Risk Management Verification
-  agentNodes[1].status = "running";
-  renderAgentPipelineUI();
-  logExecution("Agent 2: Risk Agent evaluating portfolio drawdown & target bounds...");
-  await new Promise(r => setTimeout(r, 1000));
-  agentNodes[1].status = "completed";
-  renderAgentPipelineUI();
-
-  // Step 3: Alpaca Execution Dispatch
-  agentNodes[2].status = "running";
-  renderAgentPipelineUI();
-  logExecution("Agent 3: Alpaca REST API order payload constructed & signed.");
-  await new Promise(r => setTimeout(r, 800));
-  agentNodes[2].status = "completed";
-  renderAgentPipelineUI();
-
-  logExecution("✅ Pipeline complete: Orders simulated & telemetry updated.");
-  if (btn) btn.disabled = false;
-}
-
-// Reset Pipeline Status
-function resetAgentPipeline() {
-  agentNodes.forEach(node => node.status = "idle");
-  renderAgentPipelineUI();
-  logExecution("System state reset to IDLE.");
-}
-
-// Expose functions globally
-window.triggerAgentPipeline = triggerAgentPipeline;
-window.resetAgentPipeline = resetAgentPipeline;
-
-// Render UI and bind button events immediately
-renderAgentPipelineUI();
-renderTradingSignalsUI();
-
-const runBtn = document.getElementById("btn-run-pipeline");
-const resetBtn = document.getElementById("btn-reset-pipeline");
-
-if (runBtn) {
-  runBtn.addEventListener("click", triggerAgentPipeline);
-}
-
-if (resetBtn) {
-  resetBtn.addEventListener("click", resetAgentPipeline);
-}
-}
+// Initialize grid on load
+document.addEventListener("DOMContentLoaded", () => {
+  renderAssetCatalog("all");
+});
