@@ -664,4 +664,137 @@ function initCommandTerminal() {
       if (cmd) processQuery(cmd);
     });
   });
+
+/* ==========================================================================
+   Agentic Trading & Multi-Agent Orchestrator Engine
+   ========================================================================== */
+
+// State management for Multi-Agent Workflow
+const agentNodes = [
+  { id: "agent-1", name: "DeepSeek Market Analysis Agent", role: "Signal Generation", status: "idle", lastRun: "N/A" },
+  { id: "agent-2", name: "Risk Management Agent", role: "Position Sizing & Stop-Loss", status: "idle", lastRun: "N/A" },
+  { id: "agent-3", name: "Alpaca Order Execution Agent", role: "REST/WebSocket Dispatch", status: "idle", lastRun: "N/A" }
+];
+
+// Active mock signals for the trading dashboard
+let currentSignals = [
+  { symbol: "AAPL", action: "BUY", confidence: "94%", target: "$235.00", riskRatio: "1:2.5" },
+  { symbol: "NVDA", action: "HOLD", confidence: "78%", target: "$130.00", riskRatio: "1:1.8" },
+  { symbol: "BTC/USD", action: "BUY", confidence: "89%", target: "$68,500", riskRatio: "1:3.1" }
+];
+
+// Render Agent Pipeline Status UI
+function renderAgentPipelineUI() {
+  const container = document.getElementById("agent-nodes-list");
+  if (!container) return;
+
+  container.innerHTML = agentNodes.map(agent => {
+    let statusBg = "rgba(110,118,129,0.1)";
+    let statusColor = "#8b949e";
+    let statusText = "IDLE";
+
+    if (agent.status === "running") {
+      statusBg = "rgba(210,153,34,0.15)";
+      statusColor = "#d29922";
+      statusText = "RUNNING...";
+    } else if (agent.status === "completed") {
+      statusBg = "rgba(63,185,80,0.15)";
+      statusColor = "#3fb950";
+      statusText = "SUCCESS";
+    }
+
+    return `
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; background: rgba(255,255,255,0.02); border: 1px solid #21262d; border-radius: 6px;">
+        <div>
+          <div style="font-weight: 600; color: #c9d1d9;">${agent.name}</div>
+          <div style="color: #8b949e; font-size: 0.75rem;">Role: ${agent.role}</div>
+        </div>
+        <span style="font-size: 0.7rem; font-weight: 600; padding: 2px 6px; background: ${statusBg}; border-radius: 4px; color: ${statusColor};">
+          ${statusText}
+        </span>
+      </div>
+    `;
+  }).join("");
+}
+
+// Render Trading Signals UI
+function renderTradingSignalsUI() {
+  const container = document.getElementById("trading-signals-container");
+  if (!container) return;
+
+  container.innerHTML = currentSignals.map(sig => {
+    const actionColor = sig.action === "BUY" ? "#3fb950" : sig.action === "SELL" ? "#f85149" : "#d29922";
+
+    return `
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; background: rgba(255,255,255,0.02); border: 1px solid #21262d; border-radius: 6px;">
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <span style="font-weight: bold; color: #f0f6fc;">${sig.symbol}</span>
+          <span style="font-size: 0.75rem; font-weight: bold; color: ${actionColor}; padding: 1px 5px; border: 1px solid ${actionColor}; border-radius: 3px;">${sig.action}</span>
+        </div>
+        <div style="text-align: right; font-size: 0.75rem; color: #8b949e;">
+          <div>Conf: <strong style="color: #c9d1d9;">${sig.confidence}</strong> | R/R: ${sig.riskRatio}</div>
+          <div>Target: ${sig.target}</div>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+// Log messages to execution terminal
+function logExecution(msg) {
+  const logDiv = document.getElementById("execution-log");
+  if (!logDiv) return;
+  const time = new Date().toLocaleTimeString([], { hour12: false });
+  logDiv.innerHTML += `<br>[${time}] ${msg}`;
+  logDiv.scrollTop = logDiv.scrollHeight;
+}
+
+// Trigger Multi-Agent Workflow Pipeline Simulation
+async function triggerAgentPipeline() {
+  const btn = document.getElementById("btn-run-pipeline");
+  if (btn) btn.disabled = true;
+
+  logExecution("Initiating Multi-Agent Workflow sequence...");
+
+  // Step 1: DeepSeek Analysis
+  agentNodes[0].status = "running";
+  renderAgentPipelineUI();
+  logExecution("Agent 1: DeepSeek analyzing market orderbook & news sentiment...");
+  await new Promise(r => setTimeout(r, 1200));
+  agentNodes[0].status = "completed";
+  renderAgentPipelineUI();
+
+  // Step 2: Risk Management Verification
+  agentNodes[1].status = "running";
+  renderAgentPipelineUI();
+  logExecution("Agent 2: Risk Agent evaluating portfolio drawdown & target bounds...");
+  await new Promise(r => setTimeout(r, 1000));
+  agentNodes[1].status = "completed";
+  renderAgentPipelineUI();
+
+  // Step 3: Alpaca Execution Dispatch
+  agentNodes[2].status = "running";
+  renderAgentPipelineUI();
+  logExecution("Agent 3: Alpaca REST API order payload constructed & signed.");
+  await new Promise(r => setTimeout(r, 800));
+  agentNodes[2].status = "completed";
+  renderAgentPipelineUI();
+
+  logExecution("✅ Pipeline complete: Orders simulated & telemetry updated.");
+  if (btn) btn.disabled = false;
+}
+
+// Reset Pipeline Status
+function resetAgentPipeline() {
+  agentNodes.forEach(node => node.status = "idle");
+  renderAgentPipelineUI();
+  logExecution("System state reset to IDLE.");
+}
+
+// Initialize Module on Load
+document.addEventListener("DOMContentLoaded", () => {
+  renderAgentPipelineUI();
+  renderTradingSignalsUI();
+});
+
 }
