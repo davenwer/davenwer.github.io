@@ -367,6 +367,53 @@
         </div>
       </section>
 
+<!-- ==========================================================================
+   Agentic Trading & Multi-Agent Command Center
+   ========================================================================== -->
+<section id="agentic-trading-center" class="section-container" style="margin-top: 2rem;">
+  <h2 style="display: flex; align-items: center; gap: 8px;">
+    🤖 Autonomous Trading & Multi-Agent Orchestrator
+  </h2>
+  
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-top: 1rem;">
+    
+    <!-- Panel 1: Multi-Agent Pipeline Orchestrator -->
+    <div class="card" style="background: rgba(22, 27, 34, 0.7); border: 1px solid #30363d; padding: 16px; border-radius: 8px;">
+      <h3 style="font-size: 1rem; margin-bottom: 12px; color: #58a6ff;">🕸️ Agent Pipeline Status</h3>
+      
+      <div id="agent-nodes-list" style="display: flex; flex-direction: column; gap: 8px; font-size: 0.85rem;">
+        <!-- Dynamically Rendered Agent Nodes -->
+      </div>
+
+      <div style="margin-top: 16px; display: flex; gap: 8px;">
+        <button id="btn-run-pipeline" onclick="triggerAgentPipeline()" style="flex: 1; padding: 8px; background: #238636; color: #fff; border: 1px solid rgba(240,246,252,0.1); border-radius: 6px; cursor: pointer; font-weight: 600;">
+          ▶ Run Workflow
+        </button>
+        <button onclick="resetAgentPipeline()" style="padding: 8px 12px; background: #21262d; color: #c9d1d9; border: 1px solid #30363d; border-radius: 6px; cursor: pointer;">
+          🔄 Reset
+        </button>
+      </div>
+    </div>
+
+    <!-- Panel 2: Alpaca / DeepSeek Signals & Execution -->
+    <div class="card" style="background: rgba(22, 27, 34, 0.7); border: 1px solid #30363d; padding: 16px; border-radius: 8px;">
+      <h3 style="font-size: 1rem; margin-bottom: 12px; color: #3fb950; display: flex; justify-content: space-between; align-items: center;">
+        <span>📈 DeepSeek Signals (Alpaca)</span>
+        <span id="alpaca-net-status" style="font-size: 0.7rem; padding: 2px 6px; background: rgba(63,185,80,0.15); border: 1px solid rgba(63,185,80,0.3); border-radius: 4px; color: #3fb950;">STREAM ONLINE</span>
+      </h3>
+
+      <div id="trading-signals-container" style="display: flex; flex-direction: column; gap: 8px; font-size: 0.85rem;">
+        <!-- Dynamically Rendered Signals -->
+      </div>
+
+      <div id="execution-log" style="margin-top: 12px; padding: 8px; background: #0d1117; border: 1px solid #21262d; border-radius: 4px; font-family: monospace; font-size: 0.75rem; color: #8b949e; max-height: 80px; overflow-y: auto;">
+        > System ready. Awaiting pipeline execution...
+      </div>
+    </div>
+
+  </div>
+</section>
+        
       <!-- Projects Section -->
       <section id="projects">
         <h2>Projects</h2>
